@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSCE · Urgencias Pediátricas</title>
+<style>
+  :root{
+    --bg:#0a0e14;
+    --panel:#121821;
+    --panel2:#161e29;
+    --border:#232c38;
+    --text:#e7edf3;
+    --dim:#93a1b0;
+    --mute:#5f6b78;
+    --mono:ui-monospace,'SF Mono','Cascadia Mono','JetBrains Mono',Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --good:#35e08a;
+    --accent:#35e08a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--sans);}
+  body{padding-bottom:60px;}
+  a{color:inherit;}
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,14,20,0.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    padding:10px 14px;
+  }
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:.2px;margin-bottom:8px;}
+  .brand .pulse{color:var(--good);font-size:18px;animation:beat 1.4s ease-in-out infinite;}
+  @keyframes beat{0%,100%{transform:scale(1);}25%{transform:scale(1.25);}40%{transform:scale(1);}}
+  .case-pills{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+  .case-pills::-webkit-scrollbar{display:none;}
+  .pill{
+    flex:0 0 auto;font-family:var(--mono);font-size:11.5px;font-weight:600;
+    border:1px solid var(--border);border-radius:20px;padding:7px 12px;
+    background:var(--panel);color:var(--dim);cursor:pointer;white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .pill:active{transform:scale(.96);}
+  .pill.active{color:#0a0e14;border-color:transparent;font-weight:700;}
+
+  /* ---------- disclaimer ---------- */
+  .banner{
+    margin:12px 14px;padding:12px 14px;background:var(--panel);border:1px solid var(--border);
+    border-left:3px solid #ffb238;border-radius:8px;font-size:12.5px;line-height:1.55;color:var(--dim);
+  }
+  .banner b{color:var(--text);}
+  .banner.small{font-size:11.5px;margin-top:14px;}
+
+  main{max-width:720px;margin:0 auto;padding:0 14px;}
+
+  /* ---------- case header ---------- */
+  .case-badge{
+    display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:700;
+    letter-spacing:.5px;padding:4px 9px;border-radius:5px;margin-bottom:10px;
+    background:color-mix(in srgb, var(--accent) 18%, transparent);color:var(--accent);
+  }
+  .case-title{font-size:21px;font-weight:800;line-height:1.25;margin:0 0 4px 0;}
+  .case-subtitle{font-size:13.5px;color:var(--dim);margin:0 0 16px 0;}
+
+  /* ---------- mode switch ---------- */
+  .switch{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;gap:4px;margin-bottom:16px;}
+  .switch button{
+    flex:1;padding:10px 8px;border:none;border-radius:7px;background:transparent;color:var(--dim);
+    font-family:var(--sans);font-weight:700;font-size:13px;cursor:pointer;transition:all .15s ease;
+  }
+  .switch button.on{background:var(--accent);color:#0a0e14;}
+
+  /* ---------- monitor ---------- */
+  .monitor{
+    background:#070a0f;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;
+  }
+  .ecg-wrap{overflow:hidden;height:46px;border-bottom:1px solid var(--border);background:#050708;}
+  .ecg-track{display:flex;width:200%;height:100%;animation:scrollECG 2.6s linear infinite;}
+  .ecg-track svg{flex:0 0 50%;height:100%;display:block;}
+  @keyframes scrollECG{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+  .vital{background:#0d131c;padding:10px 8px;text-align:center;}
+  .vital .val{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--good);}
+  .vital .lab{font-size:9.5px;color:var(--mute);letter-spacing:.5px;margin-top:2px;text-transform:uppercase;}
+  .vital.fc .val{color:#ff6b7a;}
+  .vital.sat .val{color:#4ec4ff;}
+  .vital.pa .val{color:#e7edf3;}
+  .vital.temp .val{color:#ffb238;}
+  .vital.peso .val{color:#c0a8ff;}
+  .vital.fr .val{color:#35e08a;}
+
+  /* ---------- cards / content blocks ---------- */
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
+  .card h4{margin:0 0 8px 0;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);}
+  .card p{font-size:14.5px;line-height:1.6;color:var(--text);margin:0;}
+  .card p + p{margin-top:8px;}
+
+  /* timer */
+  .timer{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;}
+  .timer .tval{font-family:var(--mono);font-size:24px;font-weight:700;letter-spacing:1px;}
+  .timer .tval.warn{color:#ff6b7a;}
+  .timer button{
+    font-family:var(--sans);font-size:12px;font-weight:700;padding:8px 12px;border-radius:7px;
+    border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;
+  }
+  .timer .lab{font-size:11px;color:var(--mute);margin-left:auto;}
+
+  /* accordion */
+  details.acc{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+  details.acc summary{
+    list-style:none;cursor:pointer;padding:14px 16px;font-weight:700;font-size:14px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  details.acc summary::-webkit-details-marker{display:none;}
+  details.acc summary .arrow{color:var(--accent);transition:transform .2s ease;font-size:12px;}
+  details.acc[open] summary .arrow{transform:rotate(90deg);}
+  details.acc .acc-body{padding:0 16px 16px 16px;font-size:14px;line-height:1.6;color:var(--dim);}
+  details.acc .acc-body b, details.acc .acc-body strong{color:var(--text);}
+
+  dl.script dt{font-weight:700;color:var(--text);margin-top:12px;font-size:13.5px;}
+  dl.script dt:first-child{margin-top:0;}
+  dl.script dd{margin:4px 0 0 0;font-style:italic;color:var(--dim);font-size:13.5px;}
+
+  ul.plain{margin:0;padding-left:18px;}
+  ul.plain li{margin-bottom:6px;font-size:14px;}
+
+  /* checklist */
+  .score-bar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .score-track{flex:1;height:8px;background:var(--panel2);border-radius:5px;overflow:hidden;border:1px solid var(--border);}
+  .score-fill{height:100%;background:var(--accent);width:0%;transition:width .25s ease;}
+  .score-txt{font-family:var(--mono);font-size:12.5px;color:var(--dim);white-space:nowrap;}
+  .checklist-group{margin-bottom:14px;}
+  .checklist-group h5{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mute);margin:0 0 8px 0;}
+  .chk-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+  .chk-item:last-child{border-bottom:none;}
+  .chk-item input{margin-top:3px;width:17px;height:17px;accent-color:var(--accent);flex:0 0 auto;}
+  .chk-item label{font-size:13.5px;line-height:1.5;color:var(--dim);}
+  .chk-item.checked label{color:var(--text);}
+  .chk-item .crit{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;color:#ff6b7a;border:1px solid #ff6b7a55;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+  .reset-btn{font-family:var(--sans);font-size:11.5px;font-weight:700;color:var(--mute);background:none;border:1px solid var(--border);border-radius:7px;padding:6px 10px;cursor:pointer;margin-top:6px;}
+
+  /* pitfalls */
+  .pitfall{background:#1a1013;border:1px solid #3a1e22;border-left:3px solid #ff6b7a;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13.5px;line-height:1.5;color:#f0c3c8;}
+
+  /* flip cards */
+  .flip-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+  .flip{perspective:1000px;height:150px;cursor:pointer;}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+  .flip.on .flip-inner{transform:rotateY(180deg);}
+  .flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:14px 16px;
+    display:flex;align-items:center;border:1px solid var(--border);}
+  .flip-front{background:var(--panel2);}
+  .flip-front .tag{font-family:var(--mono);font-size:9.5px;color:var(--accent);display:block;margin-bottom:6px;letter-spacing:.5px;}
+  .flip-front p{margin:0;font-size:14px;font-weight:600;color:var(--text);}
+  .flip-back{background:color-mix(in srgb, var(--accent) 12%, #10151d);transform:rotateY(180deg);}
+  .flip-back p{margin:0;font-size:13px;line-height:1.55;color:var(--text);}
+  .tap-hint{font-size:10px;color:var(--mute);position:absolute;bottom:8px;right:12px;}
+
+  .source-note{font-size:11px;color:var(--mute);margin-top:18px;padding-top:12px;border-top:1px dashed var(--border);line-height:1.5;}
+
+  h3.section-h{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--mute);margin:22px 0 10px 0;}
+  h3.section-h:first-of-type{margin-top:4px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="pulse">♥</span><span>OSCE · Urgencias Pediátricas</span></div>
+  <div class="case-pills" id="casePills"></div>
+</div>
+
+<main>
+  <div class="banner" id="topBanner"></div>
+  <div id="caseContainer"></div>
+</main>
+
+<script>
+/* ============================================================
+   DATOS DE LOS 4 CASOS
+   ============================================================ */
+const CASES = [
+{
+  id:'c1', accent:'#ff5464',
+  badge:'CRÍTICO · SHOCK / INFECTO',
+  title:'Lactante con fiebre y manchas en la piel',
+  subtitle:'Shock séptico — sospecha de enfermedad meningocócica invasora (meningococcemia)',
+  vignette:'Estás en el box de reanimación del Servicio de Urgencia Pediátrico. Ingresa un lactante de 8 meses traído por su madre, consultan por fiebre. Realiza anamnesis dirigida y examen físico (verbalizando qué buscas), plantea tus hipótesis diagnósticas y el manejo inicial.',
+  vitals:{fc:'188',fr:'46',sat:'94%',pa:'88/52',temp:'39.4°',peso:'8 kg'},
+  task:'Tienes ~8 minutos para anamnesis + examen físico dirigido, y 2-3 minutos para plantear diagnóstico y manejo al examinador.',
+  timerMin:8,
+  actorScript:[
+    {q:'Tiempo de evolución de la fiebre', a:'Partió hace unas 6 horas, de forma brusca, hasta 39.5°C.'},
+    {q:'Estado general / evolución', a:'Al principio estaba irritable y lloraba mucho, pero en la última hora "lo noto raro", decaído, no quiere jugar ni que lo tomen en brazos.'},
+    {q:'Piel / exantema (si no preguntan espontáneamente, no ofrecer el dato)', a:'Hace 30-40 minutos noté unas manchas moradas en la guata y las piernas que antes no tenía. No le pican. No se van cuando le estiro la piel encima.'},
+    {q:'Síntomas digestivos', a:'No ha vomitado, no tiene diarrea. Ha comido mal en las últimas horas.'},
+    {q:'Síntomas respiratorios', a:'No tiene tos ni moco.'},
+    {q:'Antecedentes / vacunas', a:'Nació de término, sano. Vacunas al día, excepto la del meningococo B (Bexsero) porque es pagada y no alcanzamos a ponérsela.'},
+    {q:'Contactos / epidemiología', a:'Va a sala cuna. No conozco a nadie con meningitis. No ha viajado.'},
+    {q:'Alergias', a:'No tiene alergias conocidas.'}
+  ],
+  examFindings:[
+    'Aspecto general: decaído, hipoactivo, quejumbroso, mal contacto visual (TEP alterado en "aspecto").',
+    'Piel (solo si el estudiante desviste completamente al paciente): petequias y elementos purpúricos que NO blanquean a la vitropresión, en tronco, glúteos y extremidades inferiores; algunos de mayor tamaño, francamente equimóticos.',
+    'Llene capilar: 4 segundos.',
+    'Extremidades: frías, pulsos periféricos débiles, pulsos centrales presentes.',
+    'Fontanela anterior: normotensa (no abombada).',
+    'Signos meníngeos (Brudzinski, Kernig): NEGATIVOS — dato importante, su ausencia no descarta enfermedad meningocócica, sobre todo en lactantes.',
+    'Auscultación cardiopulmonar: taquicárdico, regular, sin soplos, murmullo pulmonar conservado.',
+    'Abdomen: blando, depresible, sin signos peritoneales.',
+    'Si el estudiante NO desviste completamente al paciente, no descubre las petequias: márcalo como un error de la "E" (exposición) del ABCDE al final.'
+  ],
+  diagnosis:{
+    main:'Shock séptico compensado por sospecha de enfermedad meningocócica invasora (meningococcemia).',
+    diffs:['Sepsis por otro agente (ej. neumococo)','Síndrome purpúrico de otra causa (PTI, púrpura de Henoch-Schönlein) — pero no explican la fiebre alta ni el compromiso hemodinámico','CID de otro origen']
+  },
+  checklist:[
+    {section:'Anamnesis', items:[
+      {t:'Precisa tiempo de evolución de la fiebre', p:1},
+      {t:'Pregunta dirigidamente por decaimiento / rechazo alimentario', p:1},
+      {t:'Pregunta activamente por lesiones o cambios en la piel', p:1},
+      {t:'Pregunta por antecedente de vacunación (meningococo)', p:1},
+      {t:'Pregunta por contactos con cuadros similares', p:1},
+    ]},
+    {section:'Examen físico', items:[
+      {t:'Aplica el Triángulo de Evaluación Pediátrica (aspecto-respiración-circulación)', p:1},
+      {t:'Desviste completamente al paciente y examina toda la superficie cutánea', p:2, crit:true},
+      {t:'Evalúa llene capilar y pulsos periféricos', p:1},
+      {t:'Busca signos meníngeos (aunque resulten negativos)', p:1},
+      {t:'Evalúa fontanela', p:1},
+    ]},
+    {section:'Razonamiento clínico', items:[
+      {t:'Reconoce que el paciente está en shock aunque la PA sea "normal" (shock compensado)', p:2, crit:true},
+      {t:'Plantea meningococcemia / enfermedad meningocócica invasora como primera hipótesis', p:2, crit:true},
+      {t:'Verbaliza la urgencia vital del cuadro (puede matar en <12 horas)', p:1},
+    ]},
+    {section:'Manejo', items:[
+      {t:'ABCDE: oxígeno y monitorización continua', p:1},
+      {t:'Instala 2 vías venosas periféricas', p:1},
+      {t:'Solicita exámenes: hemograma, PCR, hemocultivos x2, GSV, ELP, pruebas de coagulación, cultivo de lesiones cutáneas', p:2, crit:true},
+      {t:'Indica bolo de cristaloide (SF o RL) 20 ml/kg EV en 5-15 min', p:2, crit:true},
+      {t:'Indica antibiótico empírico precoz (Ceftriaxona 100 mg/kg/día) SIN esperar la punción lumbar', p:2, crit:true},
+      {t:'Menciona aislamiento del paciente', p:1},
+      {t:'Menciona notificación ENO inmediata (obligatoria)', p:1},
+      {t:'Menciona profilaxis a contactos (rifampicina / ceftriaxona / ciprofloxacino)', p:1},
+      {t:'Indica hospitalización en UCI/UTI', p:1},
+    ]},
+  ],
+  pitfalls:[
+    'Esperar el resultado de la punción lumbar antes de iniciar antibióticos.',
+    'No reconocer el shock porque la presión arterial todavía está "normal" (shock compensado).',
+    'No desvestir completamente al paciente y no pesquisar las petequias.',
+    'Olvidar la notificación obligatoria (ENO) y la profilaxis de contactos.'
+  ],
+  examinerQA:[
+    {q:'¿Cuál es el agente etiológico más probable y por qué es tan grave?', a:'Neisseria meningitidis. Es grave por su rápida diseminación hematógena y la respuesta inflamatoria sistémica que activa la cascada de coagulación; puede provocar la muerte en 12 horas o menos.'},
+    {q:'¿Por qué no se debe retrasar el antibiótico esperando la punción lumbar?', a:'Porque la letalidad es muy alta y precoz. Ante inestabilidad hemodinámica se puede postergar el estudio —incluida la PL— pero no el antibiótico.'},
+    {q:'¿Qué antibiótico usarías y a qué dosis?', a:'Ceftriaxona 100 mg/kg/día cada 24 horas. Alternativas: cefotaxima, penicilina G sódica o cloranfenicol.'},
+    {q:'¿A quién le das profilaxis y con qué?', a:'A los contactos (convivientes, contacto >6-8h bajo el mismo techo, exposición a secreciones): rifampicina VO, ceftriaxona IM o ciprofloxacino, según edad.'},
+    {q:'¿Qué complicación asocia insuficiencia suprarrenal aguda en meningococcemia?', a:'El síndrome de Waterhouse-Friderichsen: hipotensión + hemorragia adrenal aguda.'},
+  ],
+  sourceNote:'Basado en las secciones "Shock en urgencia" y "Meningococcemia / Meningitis" del homúnculo (manejo de shock séptico integrado con el manejo específico de meningococcemia que trae el documento).'
+},
+{
+  id:'c2', accent:'#ffb238',
+  badge:'CRÍTICO · ALERGIA',
+  title:'Escolar con ronchas y dificultad para respirar',
+  subtitle:'Anafilaxia post-ingesta alimentaria',
+  vignette:'Estás en el box de reanimación. Un padre trae a su hijo de 7 años, hace unos 15 minutos empezó con "ronchas" en la piel y ahora dice que "le cuesta respirar". Realiza el manejo inicial.',
+  vitals:{fc:'132',fr:'32',sat:'93%',pa:'100/65',temp:'36.8°',peso:'24 kg'},
+  task:'Tienes ~8 minutos para evaluar y manejar. El evaluador puede indicarte "cede" o "empeora" según las medidas que vayas tomando.',
+  timerMin:8,
+  actorScript:[
+    {q:'¿Qué comió / qué pasó?', a:'Comió una galleta en el colegio hace unos 20 minutos. No sabíamos que tenía trazas de maní.'},
+    {q:'Antecedente alérgico', a:'Es alérgico al maní, lo sabemos desde los 3 años. Antes había tenido reacciones, pero solo ronchas leves, nunca así.'},
+    {q:'¿Trae autoinyector de adrenalina?', a:'No, no traemos nada, no pensamos que fuera a ser tan grave.'},
+    {q:'Síntomas actuales', a:'Le pican mucho el cuerpo entero, se le hincharon los labios, tiene tos seca y siente que "no le entra el aire". Tiene náuseas, no ha vomitado.'},
+    {q:'Antecedente de asma u otras alergias', a:'No tiene asma ni otras alergias conocidas.'}
+  ],
+  examFindings:[
+    'Piel: urticaria / habones generalizados en tronco y extremidades.',
+    'Cara: edema labial y perioral leve-moderado, sin estridor.',
+    'Vía aérea inferior: sibilancias espiratorias bilaterales a la auscultación.',
+    'Tórax: uso leve de musculatura accesoria.',
+    'Hemodinamia: taquicárdico, presión arterial aún dentro de rango normal para la edad.',
+    'Neurológico: conciencia conservada, ansioso, orientado.',
+    'Si el estudiante NO ausculta o NO busca compromiso de vía aérea superior, no entrega estos hallazgos espontáneamente — que los busque activamente.'
+  ],
+  diagnosis:{
+    main:'Anafilaxia (cumple criterio 1 NIAID/FAAN: inicio agudo de compromiso cutáneo/mucoso + compromiso respiratorio, tras exposición a alérgeno conocido).',
+    diffs:['Reacción vasovagal','Crisis asmática aislada','Cuerpo extraño en vía aérea','Laringitis grado III-IV / epiglotitis','Angioedema hereditario']
+  },
+  checklist:[
+    {section:'Anamnesis', items:[
+      {t:'Pregunta por exposición/ingesta reciente y alérgeno conocido', p:1},
+      {t:'Pregunta por antecedentes de alergia y reacciones previas', p:1},
+      {t:'Pregunta si porta autoinyector de adrenalina', p:1},
+    ]},
+    {section:'Examen físico', items:[
+      {t:'Evalúa ABCDE completo (vía aérea, respiración, piel, hemodinamia)', p:1},
+      {t:'Busca activamente edema de vía aérea superior / angioedema', p:1},
+      {t:'Ausculta pulmonar buscando broncoespasmo', p:1},
+    ]},
+    {section:'Razonamiento clínico', items:[
+      {t:'Reconoce los criterios diagnósticos de anafilaxia (piel/mucosa + compromiso respiratorio)', p:2, crit:true},
+      {t:'Identifica que la anafilaxia es una forma de shock distributivo y su gravedad potencial', p:1},
+    ]},
+    {section:'Manejo', items:[
+      {t:'Administra adrenalina IM 0.01 mg/kg (1:1000) en cara anterolateral del muslo, de inmediato', p:3, crit:true},
+      {t:'Oxígeno y monitorización continua', p:1},
+      {t:'Posiciona adecuadamente al paciente (según predomine disnea o hipotensión)', p:1},
+      {t:'Sabe que puede repetir adrenalina IM cada 5-15 min si no hay respuesta', p:2, crit:true},
+      {t:'Instala vía venosa y considera volumen si hay compromiso hemodinámico', p:1},
+      {t:'Indica corticoide EV (hidrocortisona 10-15 mg/kg)', p:1},
+      {t:'Indica salbutamol nebulizado si persiste broncoespasmo', p:1},
+      {t:'Considera antihistamínicos H1 y H2 como terapia adyuvante (nunca de primera línea)', p:1},
+      {t:'Indica observación prolongada por riesgo de reacción bifásica (hasta 72h si fue grave)', p:1},
+      {t:'Al alta: educa en evitar alérgeno, prescribe autoinyector y deriva a alergología', p:1},
+    ]},
+  ],
+  pitfalls:[
+    'Administrar antihistamínico como primera medida en lugar de adrenalina — error clásico y peligroso.',
+    'Dudar en dar adrenalina porque la presión arterial "todavía está normal".',
+    'No dejar en observación por el riesgo de reacción bifásica.',
+    'Usar vía subcutánea en lugar de intramuscular.'
+  ],
+  examinerQA:[
+    {q:'¿Cuál es el fármaco de elección y por qué se administra de inmediato?', a:'Adrenalina IM. No existen contraindicaciones en anafilaxia; revierte vasodilatación, broncoespasmo y edema. "La epinefrina salva vidas".'},
+    {q:'¿Dosis y sitio de administración?', a:'0.01 mg/kg IM (máximo 0.5 mg en >50 kg), en la cara anterolateral del muslo.'},
+    {q:'¿Qué es la anafilaxia bifásica y cómo define el tiempo de observación?', a:'Recurrencia de síntomas entre 1 y 48 horas (habitualmente 12h) tras la resolución inicial, sin nueva exposición al alérgeno. Una reacción inicial grave (que requirió más de una dosis de adrenalina) es factor de riesgo, por lo que se sugiere observar hasta 72 horas en esos casos.'},
+    {q:'Menciona 3 diagnósticos diferenciales de anafilaxia.', a:'Reacción vasovagal, crisis asmática, cuerpo extraño en vía aérea, laringitis grave o angioedema hereditario (cualquiera de tres).'},
+  ],
+  sourceNote:'Basado en la sección "Anafilaxia" del homúnculo (definición, criterios diagnósticos NIAID/FAAN, cuadro clínico, patrones temporales y tratamiento con dosis).'
+},
+{
+  id:'c3', accent:'#8b7cf6',
+  badge:'CRÍTICO · NEURO',
+  title:'Preescolar que llega convulsionando',
+  subtitle:'Estado epiléptico febril',
+  vignette:'Estás en el box de reanimación. Una madre trae en brazos a su hija de 2 años, que actualmente presenta movimientos tónico-clónicos generalizados; según la madre "llevan varios minutos". Actúa.',
+  vitals:{fc:'160',fr:'28*',sat:'91%',pa:'—',temp:'39.7°',peso:'13 kg'},
+  task:'La crisis está ACTIVA al iniciar la estación y continúa hasta que indiques tratamiento anticonvulsivante correcto (el evaluador te avisará cuándo "cede"). Tienes ~8 minutos.',
+  timerMin:8,
+  actorScript:[
+    {q:'Duración de la crisis actual', a:'Empezó hace unos 8 minutos en la casa y todavía sigue.'},
+    {q:'Antecedente febril', a:'Lleva como 8 horas con fiebre, hasta 39.8°C, y hace 2 días con moco y tos (parece un resfrío).'},
+    {q:'Antecedente de convulsiones/epilepsia', a:'Es la primera vez que le pasa esto, nunca había convulsionado.'},
+    {q:'Trauma / tóxicos', a:'No se ha golpeado la cabeza, no hay acceso a medicamentos ni productos de aseo en la casa.'}
+  ],
+  examFindings:[
+    'Mientras la crisis está activa: el examen es limitado — se puede observar el patrón motor (tónico-clónico generalizado) y monitorizar signos vitales.',
+    'Instrucción para el evaluador: la crisis "cede" recién cuando el estudiante indique correctamente una benzodiacepina a dosis adecuada (o mencione la administración correcta). Si el estudiante pide HGT, entrégalo: 90 mg/dl (normal).',
+    'Post-ictal (una vez cede): somnolienta, pero recupera progresivamente el estado de conciencia.',
+    'Sin rigidez de nuca evidente, sin signos de foco neurológico al ceder la crisis.',
+    'Fontanela cerrada (esperable a los 2 años).',
+    'Sin exantema en la piel.'
+  ],
+  diagnosis:{
+    main:'Estado epiléptico febril (toda convulsión de más de 5 minutos se trata, por convención, como estatus convulsivo).',
+    diffs:['Síncope febril','Delirio febril','Escalofríos','Mioclonías del sueño','Distonía (siempre patológica, secundaria a fármaco o tumor)']
+  },
+  checklist:[
+    {section:'Anamnesis (en paralelo al manejo)', items:[
+      {t:'Precisa tiempo de evolución de la fiebre y busca foco (síntomas respiratorios)', p:1},
+      {t:'Pregunta por antecedentes de convulsiones o epilepsia previas', p:1},
+      {t:'Pregunta duración exacta del episodio actual', p:1},
+    ]},
+    {section:'Manejo inmediato (ABC)', items:[
+      {t:'Posición de seguridad (decúbito lateral / posición de olfateo) para proteger la vía aérea', p:2, crit:true},
+      {t:'Aspira secreciones si corresponde', p:1},
+      {t:'Administra O2 100% por mascarilla de no reinhalación', p:2, crit:true},
+      {t:'Instala 2 vías venosas periféricas', p:1},
+      {t:'Solicita HGT de inmediato para descartar hipoglicemia', p:2, crit:true},
+      {t:'Reconoce que >5 minutos de convulsión se maneja como estatus convulsivo', p:2, crit:true},
+    ]},
+    {section:'Fármacos', items:[
+      {t:'Indica benzodiacepina de 1ª línea EV (Lorazepam 0.1 mg/kg, o Midazolam 0.1 mg/kg IM/nasal si no hay vía)', p:3, crit:true},
+      {t:'Sabe que puede repetir la dosis a los 5-10 min si no cede (ventana de 1ª línea: 10 min)', p:1},
+      {t:'Si persiste tras 2 dosis de BZD, plantea 2ª línea (Levetiracetam 50 mg/kg EV en 10 min)', p:1},
+      {t:'NUNCA indica vía oral durante la crisis activa', p:1},
+      {t:'Indica tratamiento antipirético', p:1},
+    ]},
+    {section:'Disposición', items:[
+      {t:'Indica hospitalización (toda convulsión febril compleja o >15 min se hospitaliza)', p:1},
+      {t:'Discute indicación de punción lumbar (edad, post-ictal, signos meníngeos, ATB previo)', p:1},
+      {t:'Diferencia convulsión febril simple vs. compleja', p:1},
+    ]},
+  ],
+  pitfalls:[
+    'Indicar diazepam vía oral durante la crisis activa (contraindicado: siempre EV o rectal si no hay vía).',
+    'No solicitar HGT antes de asumir que "es solo" una convulsión febril.',
+    'No reconocer los 5 minutos como umbral práctico para tratar como estatus.',
+    'Olvidar la posición de seguridad / protección de la vía aérea.'
+  ],
+  examinerQA:[
+    {q:'¿A partir de qué tiempo se trata una convulsión como estatus convulsivo?', a:'Por convención práctica, toda convulsión de más de 5 minutos se maneja como estatus (la definición formal es >30 minutos, o crisis repetidas sin recuperación entre ellas).'},
+    {q:'¿Cuál es el fármaco de primera línea y qué alternativas hay sin vía venosa?', a:'Lorazepam EV 0.1 mg/kg (ideal). Sin vía venosa: Midazolam IM o intranasal, o Diazepam rectal.'},
+    {q:'¿Cuándo indicarías punción lumbar en esta convulsión febril?', a:'Si hay signos meníngeos, edad menor a 12-18 meses, estado post-ictal con alteración persistente, uso previo de antibióticos, o paciente con válvula/implante coclear.'},
+    {q:'Diferencia entre convulsión febril simple y compleja.', a:'Simple: generalizada, <15 min, episodio único, sin alteración neurológica previa ni foco post-ictal. Compleja: focal o >15 min, puede repetirse en 24h, puede dejar déficit post-ictal focal.'},
+  ],
+  sourceNote:'Basado en la sección "Síndrome convulsivo en urgencia pediátrica" del homúnculo (etiologías, laboratorio de urgencia, tratamiento del estado epiléptico por líneas, y "Convulsiones febriles" con clasificación CFS/CFC y normas MINSAL).'
+},
+{
+  id:'c4', accent:'#34d1c4',
+  badge:'CRÍTICO · GASTRO / SHOCK',
+  title:'Lactante muy decaído tras varios días de diarrea',
+  subtitle:'Deshidratación severa (shock hipovolémico) secundaria a GEA',
+  vignette:'Los padres traen a un lactante de 14 meses por 3 días de vómitos y deposiciones líquidas muy frecuentes. Hoy lo notan muy decaído y con muy poca orina. Evalúa y maneja.',
+  vitals:{fc:'175',fr:'40',sat:'96%',pa:'78/48',temp:'37.1°',peso:'9.5 kg*'},
+  task:'* El carné indica 10.2 kg hace 1 semana. Tienes ~8 minutos para anamnesis, examen y manejo inicial.',
+  timerMin:8,
+  actorScript:[
+    {q:'Características del cuadro', a:'Lleva 3 días con vómitos, como 5-6 veces al día, y diarrea muy líquida y abundante, más de 10 veces al día. Sin sangre ni moco en las deposiciones.'},
+    {q:'Diuresis', a:'No sé exactamente, pero el pañal lleva más de 8 horas seco.'},
+    {q:'Estado general', a:'Lo noto con mucho menos fuerza, decaído, hoy ni siquiera quiso tomar pecho.'},
+    {q:'Fiebre', a:'No ha tenido fiebre importante.'},
+    {q:'Antecedentes', a:'Sano, sin enfermedades previas, no toma medicamentos.'}
+  ],
+  examFindings:[
+    'Aspecto general: letárgico, hipoactivo, mal contacto visual.',
+    'Mucosas muy secas, ojos hundidos, llanto sin lágrimas.',
+    'Fontanela anterior hundida.',
+    'Llene capilar >3 segundos, extremidades frías.',
+    'Signo del pliegue cutáneo positivo (persiste al soltar).',
+    'Pulsos periféricos débiles, taquicárdico.'
+  ],
+  diagnosis:{
+    main:'Deshidratación severa (shock hipovolémico) secundaria a gastroenteritis aguda.',
+    diffs:['Shock séptico concomitante (si hubiera fiebre alta o mal aspecto desproporcionado a las pérdidas)','Síndrome hemolítico urémico (si hubiera antecedente de diarrea con sangre + palidez + oligoanuria franca)']
+  },
+  checklist:[
+    {section:'Anamnesis', items:[
+      {t:'Cuantifica pérdidas (número de deposiciones/vómitos y características)', p:1},
+      {t:'Pregunta dirigidamente por diuresis', p:1},
+      {t:'Pregunta por peso previo (para estimar % de pérdida)', p:1},
+      {t:'Pregunta por tolerancia oral', p:1},
+    ]},
+    {section:'Examen físico', items:[
+      {t:'Evalúa signos de deshidratación: mucosas, ojos, fontanela, pliegue, llene capilar', p:1},
+      {t:'Reconoce los signos de shock (llene capilar >3s, letargo, pulsos débiles)', p:2, crit:true},
+    ]},
+    {section:'Razonamiento clínico', items:[
+      {t:'Clasifica como deshidratación severa y verbaliza que "toda deshidratación grave tiene signos de shock"', p:2, crit:true},
+      {t:'NO indica manejo solo por vía oral en un paciente con signos de shock', p:2, crit:true},
+    ]},
+    {section:'Manejo', items:[
+      {t:'ABC, oxígeno si necesario, monitorización', p:1},
+      {t:'Indica bolo EV de cristaloide (SF o RL) 20 ml/kg a pasar en 5-15 minutos', p:3, crit:true},
+      {t:'Reevalúa tras el bolo y lo repite si no hay respuesta', p:2, crit:true},
+      {t:'Una vez estabilizado, calcula requerimientos con fórmula de Holliday + reposición del déficit', p:1},
+      {t:'Solicita exámenes: ELP, GSV, glicemia, función renal', p:1},
+      {t:'Indica hospitalización', p:1},
+      {t:'Plantea realimentación precoz una vez estabilizado (no prolongar el ayuno más de 6h)', p:1},
+      {t:'Menciona indicación de antibiótico solo si corresponde (ej. Shigella, o Salmonella con factores de riesgo)', p:1},
+    ]},
+  ],
+  pitfalls:[
+    'Intentar manejo con sales de rehidratación oral en un paciente que está en shock.',
+    'No reevaluar después del primer bolo de cristaloide.',
+    'Retrasar el bolo EV "esperando" los resultados de exámenes.',
+    'No hospitalizar a un paciente con deshidratación severa.'
+  ],
+  examinerQA:[
+    {q:'¿Por qué se dice que "no existe deshidratación grave que no esté en shock"?', a:'Porque implica hipoperfusión tisular (llene capilar enlentecido, letargo, pulsos débiles), es decir, cumple criterios clínicos de shock aunque la causa sea "solo" pérdida de volumen por diarrea/vómitos.'},
+    {q:'¿Qué volumen y en cuánto tiempo administrarías el bolo inicial?', a:'Cristaloide (SF o Ringer Lactato) 20 ml/kg a pasar en 5-15 minutos, repitiendo si no hay respuesta.'},
+    {q:'¿Cómo se calculan los requerimientos de mantención según Holliday?', a:'100 ml/kg para los primeros 10 kg, + 50 ml/kg por cada kg entre 11 y 20 kg, + 20 ml/kg por cada kg sobre 20 kg.'},
+    {q:'¿Cuándo usarías antibióticos en una GEA?', a:'Shigella siempre se trata; Salmonella si el paciente es menor de 3 meses, inmunodeficiente, asplénico, con EII o cuadro grave; Campylobacter si hay disentería.'},
+  ],
+  sourceNote:'Basado en la sección "Síndrome diarreico agudo y deshidratación" del homúnculo (fórmula de Holliday, esquema de rehidratación por gravedad, alteraciones hidroelectrolíticas y criterios de antibiótico). Los signos clínicos de deshidratación por mucosas/pliegue/ojos usados para armar el relato del paciente son conocimiento pediátrico general, ya que el documento no trae esa tabla específica — el manejo sí está tomado literalmente del homúnculo.'
+},
+];
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+let currentCase = 0;
+let mode = {}; // 'student' | 'evaluator' por caso
+CASES.forEach(c => mode[c.id] = 'student');
+let timers = {}; // estado de temporizador por caso
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function ecgSvg(){
+  return `<svg viewBox="0 0 400 46" preserveAspectRatio="none">
+    <polyline points="0,23 60,23 75,23 82,6 90,40 98,14 106,23 160,23 220,23 235,23 242,6 250,40 258,14 266,23 320,23 380,23 400,23"
+      fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"/>
+  </svg>`;
+}
+
+function renderPills(){
+  const el = document.getElementById('casePills');
+  el.innerHTML = CASES.map((c,i) => `
+    <button class="pill ${i===currentCase?'active':''}" style="${i===currentCase?`background:${c.accent}`:''}" data-i="${i}">
+      Caso ${i+1}
+    </button>`).join('');
+  el.querySelectorAll('.pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ currentCase = parseInt(btn.dataset.i); renderAll(); });
+  });
+}
+
+function renderBanner(m){
+  const el = document.getElementById('topBanner');
+  if(m !== 'evaluator'){ el.innerHTML = ''; el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = `
+    <b>Sobre estos casos:</b> están armados fundamentalmente con el contenido de tu homúnculo (Shock, Meningococcemia/Meningitis, Anafilaxia, Síndrome convulsivo/convulsión febril, y GEA-deshidratación).
+    Los temas <b>"Insuficiencia respiratoria aguda"</b> y <b>"Crisis asmática y SBO"</b> aparecen en el índice del documento pero <b>no tienen contenido desarrollado</b> en el PDF que me pasaste — no arme casos de esos dos porque no tenía de dónde sacarlos fielmente. Si me pasas ese contenido, te armo esos casos también.
+  `;
+}
+
+function chkKey(caseId, idx){ return `osce_${caseId}_${idx}`; }
+
+function renderCase(){
+  const c = CASES[currentCase];
+  document.documentElement.style.setProperty('--accent', c.accent);
+  const m = mode[c.id];
+  renderBanner(m);
+  let html = `
+    ${m==='evaluator' ? `<span class="case-badge">${c.badge}</span>` : ''}
+    <h2 class="case-title">${c.title}</h2>
+    ${m==='evaluator' ? `<p class="case-subtitle">${c.subtitle}</p>` : ''}
+
+    <div class="switch">
+      <button id="btnStudent" class="${m==='student'?'on':''}">🧑‍⚕️ Vista Estudiante</button>
+      <button id="btnEval" class="${m==='evaluator'?'on':''}">📋 Vista Evaluador</button>
+    </div>
+  `;
+
+  if(m === 'student'){
+    html += `
+      <div class="monitor">
+        <div class="ecg-wrap"><div class="ecg-track">${ecgSvg()}${ecgSvg()}</div></div>
+        <div class="vitals">
+          <div class="vital fc"><div class="val">${c.vitals.fc}</div><div class="lab">FC lpm</div></div>
+          <div class="vital fr"><div class="val">${c.vitals.fr}</div><div class="lab">FR rpm</div></div>
+          <div class="vital sat"><div class="val">${c.vitals.sat}</div><div class="lab">Sat O2</div></div>
+          <div class="vital pa"><div class="val">${c.vitals.pa}</div><div class="lab">PA mmHg</div></div>
+          <div class="vital temp"><div class="val">${c.vitals.temp}</div><div class="lab">Tº axilar</div></div>
+          <div class="vital peso"><div class="val">${c.vitals.peso}</div><div class="lab">Peso</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4>Viñeta clínica</h4>
+        <p>${c.vignette}</p>
+      </div>
+
+      <div class="card">
+        <h4>Tu tarea</h4>
+        <p>${c.task}</p>
+      </div>
+
+      <div class="timer">
+        <button id="timerToggle">▶ Iniciar</button>
+        <div class="tval" id="timerVal">${String(c.timerMin).padStart(2,'0')}:00</div>
+        <button id="timerReset">↺</button>
+        <span class="lab">Reloj de la estación</span>
+      </div>
+
+      <div class="banner small">Este panel es lo único que debería ver quien hace de estudiante. Que otra compañera use la <b>Vista Evaluador</b> en su propio celular o cambien de vista recién al terminar.</div>
+    `;
+  } else {
+    html += `
+      <details class="acc" open>
+        <summary>🎭 Guion del paciente / familiar (actor) <span class="arrow">▶</span></summary>
+        <div class="acc-body">
+          <p style="margin-bottom:10px;color:var(--dim);font-size:12.5px;">Solo entrega esta información si el estudiante pregunta dirigidamente por ella. No la ofrezcas espontáneamente.</p>
+          <dl class="script">
+            ${c.actorScript.map(s=>`<dt>Si pregunta por: ${s.q}</dt><dd>"${s.a}"</dd>`).join('')}
+          </dl>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>🩺 Hallazgos al examen físico <span class="arrow">▶</span></summary>
+        <div class="acc-body">
+          <ul class="plain">${c.examFindings.map(f=>`<li>${f}</li>`).join('')}</ul>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>🎯 Diagnóstico esperado <span class="arrow">▶</span></summary>
+        <div class="acc-body">
+          <p><b>${c.diagnosis.main}</b></p>
+          <p style="margin-top:10px;">Diagnósticos diferenciales a considerar:</p>
+          <ul class="plain">${c.diagnosis.diffs.map(d=>`<li>${d}</li>`).join('')}</ul>
+        </div>
+      </details>
+
+      <details class="acc" open>
+        <summary>✅ Pauta de cotejo <span class="arrow">▶</span></summary>
+        <div class="acc-body" id="checklistBody-${c.id}">
+          ${renderChecklist(c)}
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>⚠️ Errores frecuentes a vigilar <span class="arrow">▶</span></summary>
+        <div class="acc-body">
+          ${c.pitfalls.map(p=>`<div class="pitfall">${p}</div>`).join('')}
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary>❓ Preguntas del examinador (toca para ver la respuesta) <span class="arrow">▶</span></summary>
+        <div class="acc-body">
+          <div class="flip-grid">
+            ${c.examinerQA.map((qa,i)=>`
+              <div class="flip" data-flip="${i}">
+                <div class="flip-inner">
+                  <div class="flip-face flip-front"><div><span class="tag">PREGUNTA</span><p>${qa.q}</p></div><span class="tap-hint">toca ↻</span></div>
+                  <div class="flip-face flip-back"><p>${qa.a}</p><span class="tap-hint">toca ↻</span></div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </details>
+
+      <div class="source-note">📄 ${c.sourceNote}</div>
+    `;
+  }
+
+  document.getElementById('caseContainer').innerHTML = html;
+  attachHandlers(c, m);
+}
+
+function renderChecklist(c){
+  let flat = [];
+  c.checklist.forEach(group => group.items.forEach(it => flat.push(it)));
+  const totalPoints = flat.reduce((a,b)=>a+b.p,0);
+
+  let idx = 0;
+  let groupsHtml = c.checklist.map(group => {
+    let itemsHtml = group.items.map(it => {
+      const key = chkKey(c.id, idx);
+      const checked = localStorage.getItem(key) === '1';
+      const html = `
+        <div class="chk-item ${checked?'checked':''}" data-key="${key}" data-points="${it.p}">
+          <input type="checkbox" id="${key}" ${checked?'checked':''}>
+          <label for="${key}">${it.t}${it.crit?'<span class="crit">CLAVE</span>':''}</label>
+        </div>`;
+      idx++;
+      return html;
+    }).join('');
+    return `<div class="checklist-group"><h5>${group.section}</h5>${itemsHtml}</div>`;
+  }).join('');
+
+  return `
+    <div class="score-bar">
+      <div class="score-track"><div class="score-fill" id="scoreFill-${c.id}"></div></div>
+      <div class="score-txt" id="scoreTxt-${c.id}">0 / ${totalPoints} pts</div>
+    </div>
+    ${groupsHtml}
+    <button class="reset-btn" id="resetChecklist-${c.id}">↺ Reiniciar pauta</button>
+  `;
+}
+
+function updateScore(c){
+  let flat = [];
+  c.checklist.forEach(group => group.items.forEach(it => flat.push(it)));
+  const totalPoints = flat.reduce((a,b)=>a+b.p,0);
+  let earned = 0;
+  document.querySelectorAll(`#checklistBody-${c.id} .chk-item`).forEach(el=>{
+    const key = el.dataset.key;
+    if(localStorage.getItem(key) === '1'){
+      earned += parseInt(el.dataset.points);
+      el.classList.add('checked');
+    } else {
+      el.classList.remove('checked');
+    }
+  });
+  const fill = document.getElementById(`scoreFill-${c.id}`);
+  const txt = document.getElementById(`scoreTxt-${c.id}`);
+  if(fill){ fill.style.width = totalPoints ? (earned/totalPoints*100)+'%' : '0%'; }
+  if(txt){ txt.textContent = `${earned} / ${totalPoints} pts`; }
+}
+
+function attachHandlers(c, m){
+  document.getElementById('btnStudent').addEventListener('click', ()=>{ mode[c.id]='student'; renderCase(); });
+  document.getElementById('btnEval').addEventListener('click', ()=>{ mode[c.id]='evaluator'; renderCase(); });
+
+  if(m === 'evaluator'){
+    updateScore(c);
+    document.querySelectorAll(`#checklistBody-${c.id} .chk-item input`).forEach(inp=>{
+      inp.addEventListener('change', ()=>{
+        const key = inp.id;
+        localStorage.setItem(key, inp.checked ? '1' : '0');
+        updateScore(c);
+      });
+    });
+    const resetBtn = document.getElementById(`resetChecklist-${c.id}`);
+    if(resetBtn){
+      resetBtn.addEventListener('click', ()=>{
+        document.querySelectorAll(`#checklistBody-${c.id} .chk-item`).forEach(el=>{
+          localStorage.setItem(el.dataset.key, '0');
+        });
+        renderCase();
+      });
+    }
+    document.querySelectorAll('.flip').forEach(f=>{
+      f.addEventListener('click', ()=> f.classList.toggle('on'));
+    });
+  }
+
+  if(m === 'student'){
+    setupTimer(c);
+  }
+}
+
+function setupTimer(c){
+  if(!timers[c.id]) timers[c.id] = { remaining: c.timerMin*60, running:false, handle:null };
+  const t = timers[c.id];
+  const valEl = document.getElementById('timerVal');
+  const toggleBtn = document.getElementById('timerToggle');
+  const resetBtn = document.getElementById('timerReset');
+
+  function paint(){
+    const mm = Math.floor(t.remaining/60), ss = t.remaining%60;
+    valEl.textContent = `${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+    valEl.classList.toggle('warn', t.remaining <= 60);
+  }
+  paint();
+
+  toggleBtn.addEventListener('click', ()=>{
+    if(t.running){
+      clearInterval(t.handle); t.running=false; toggleBtn.textContent='▶ Iniciar';
+    } else {
+      t.running=true; toggleBtn.textContent='⏸ Pausar';
+      t.handle = setInterval(()=>{
+        if(t.remaining>0){ t.remaining--; paint(); }
+        else { clearInterval(t.handle); t.running=false; toggleBtn.textContent='▶ Iniciar'; }
+      },1000);
+    }
+  });
+  resetBtn.addEventListener('click', ()=>{
+    clearInterval(t.handle); t.running=false; t.remaining=c.timerMin*60; toggleBtn.textContent='▶ Iniciar'; paint();
+  });
+}
+
+function renderAll(){
+  renderPills();
+  renderCase();
+}
+
+renderAll();
+</script>
+</body>
+</html>
