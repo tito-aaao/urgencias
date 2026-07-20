@@ -56,6 +56,14 @@
     100%{transform:translate(30px,-24px) scale(1.12);}
   }
 
+  #sound-toggle{
+    position:fixed;top:14px;right:16px;z-index:15;
+    width:38px;height:38px;border-radius:50%;
+    border:1px solid var(--line);background:var(--surface);color:var(--text);
+    font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  #sound-toggle:focus-visible{outline:2px solid var(--gold);}
+
   #app{max-width:560px;margin:0 auto;padding:18px 16px 40px;min-height:100vh;display:flex;flex-direction:column;}
 
   .screen{display:none;flex:1;flex-direction:column;}
@@ -137,13 +145,24 @@
   .progress-teaser{display:flex;justify-content:space-between;margin-top:16px;font-size:12.5px;color:var(--text-dim);}
   .progress-teaser b{color:var(--text);}
 
+  .badge-row{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin-top:14px;}
+  .badge-chip{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    flex:0 0 auto;width:66px;padding:8px 4px;border-radius:12px;
+    background:var(--surface-2);border:1px solid var(--line);font-size:20px;
+    opacity:.35;filter:grayscale(1);text-align:center;
+  }
+  .badge-chip.unlocked{opacity:1;filter:none;border-color:var(--gold);}
+  .badge-chip .blabel{font-size:8.5px;margin-top:3px;line-height:1.2;color:var(--text-dim);font-weight:600;}
+  .badge-chip.unlocked .blabel{color:var(--text);}
+
   /* ---------- game screen ---------- */
   .hud{
     display:flex;align-items:center;justify-content:space-between;
     background:var(--surface);border:1px solid var(--line);border-radius:16px;
     padding:10px 14px;margin-bottom:10px;gap:8px;
   }
-  .hud-item{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;}
+  .hud-item{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;position:relative;}
   .hud-val{font-family:'JetBrains Mono';font-weight:700;font-size:15px;}
   .hud-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;}
   .hud-streak{color:var(--gold);}
@@ -151,7 +170,23 @@
   .ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
   .ring span{font-size:9px;font-family:'JetBrains Mono';font-weight:700;}
 
-  .waveform{height:26px;margin-bottom:14px;opacity:.85;}
+  .floatxp{
+    position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+    font-family:'JetBrains Mono';font-weight:700;color:var(--gold);font-size:13px;
+    pointer-events:none;animation:floatUp .8s ease forwards;z-index:5;
+  }
+  @keyframes floatUp{
+    0%{opacity:1;transform:translateX(-50%) translateY(0);}
+    100%{opacity:0;transform:translateX(-50%) translateY(-26px);}
+  }
+
+  .path-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px;}
+  .path-dot{width:9px;height:9px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);transition:all .2s ease;}
+  .path-dot.correct{background:var(--adren);border-color:var(--adren);}
+  .path-dot.wrong{background:var(--warn);border-color:var(--warn);}
+  .path-dot.current{transform:scale(1.5);box-shadow:0 0 0 3px rgba(255,194,102,.3);background:var(--gold);border-color:var(--gold);}
+
+  .waveform{height:22px;margin-bottom:12px;opacity:.85;}
   .waveform path{
     fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
     stroke-dasharray:340;stroke-dashoffset:340;
@@ -161,7 +196,36 @@
   }
   @keyframes trace{to{stroke-dashoffset:0;}}
 
-  .qcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;flex:1;display:flex;flex-direction:column;}
+  .qcard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px 18px;flex:1;display:flex;flex-direction:column;position:relative;transition:border-color .2s ease;}
+  .qcard.boss{border-color:var(--warn);animation:pulseBoss 1.6s ease-in-out infinite;}
+  @media (prefers-reduced-motion: reduce){ .qcard.boss{animation:none;} }
+  @keyframes pulseBoss{
+    0%,100%{box-shadow:0 0 0 1px var(--warn),0 0 16px -8px rgba(255,133,119,.5);}
+    50%{box-shadow:0 0 0 1px var(--warn),0 0 28px -6px rgba(255,133,119,.8);}
+  }
+  .boss-ribbon{
+    display:none;position:absolute;top:14px;right:14px;
+    background:var(--warn);color:#3a0e0a;font-weight:700;font-size:10.5px;
+    padding:4px 10px;border-radius:999px;letter-spacing:.02em;
+  }
+  .boss-ribbon.show{display:block;}
+
+  .mascot-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;}
+  .mascot-face{font-size:32px;line-height:1;flex:0 0 auto;transition:transform .1s ease;}
+  .mascot-face.bounce{animation:bounce .5s ease;}
+  @media (prefers-reduced-motion: reduce){ .mascot-face.bounce{animation:none;} }
+  @keyframes bounce{
+    0%{transform:scale(1) rotate(0);}
+    30%{transform:scale(1.25) rotate(-8deg);}
+    60%{transform:scale(.94) rotate(5deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+  .bubble{
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:13px;font-weight:600;
+    flex:1;min-height:18px;line-height:1.4;
+  }
+
   .tag{
     display:inline-flex;align-items:center;gap:6px;
     align-self:flex-start;
@@ -216,10 +280,14 @@
   }
   .toast.show{transform:translateX(-50%) translateY(0);}
 
+  .confetti-piece{position:fixed;top:-12px;width:8px;height:14px;z-index:30;pointer-events:none;animation:confettiFall linear forwards;}
+  @keyframes confettiFall{to{transform:translateY(112vh) rotate(540deg);opacity:.85;}}
+
   /* ---------- summary ---------- */
   .summary-hero{text-align:center;padding:22px 10px 6px;}
   .summary-hero .big{font-family:'Space Grotesk';font-size:44px;font-weight:700;margin:6px 0 2px;}
   .summary-hero .sub{color:var(--text-dim);font-size:14px;}
+  .summary-hero .headline{font-size:15px;font-weight:600;margin-top:8px;}
   .level-up{
     margin:14px 0;padding:12px 14px;border-radius:14px;
     background:linear-gradient(135deg,var(--salbu-soft),var(--adren-soft));
@@ -256,6 +324,7 @@
 </head>
 <body>
 
+<button id="sound-toggle" aria-label="Silenciar sonido">🔊</button>
 <div id="mist"><div class="puff s1"></div><div class="puff s2"></div><div class="puff s3"></div></div>
 <div class="toast" id="toast"></div>
 
@@ -299,12 +368,14 @@
 
     <button class="start-btn" id="start-btn">Empezar ronda →</button>
     <div class="progress-teaser" id="progress-teaser"></div>
+    <p class="section-label" style="margin-top:14px;">🏅 Insignias</p>
+    <div class="badge-row" id="badge-row"></div>
   </section>
 
   <!-- GAME -->
   <section class="screen" id="screen-game">
     <div class="hud">
-      <div class="hud-item">
+      <div class="hud-item" id="hud-streak-wrap">
         <div class="hud-val hud-streak"><span id="hud-streak">0</span>🔥</div>
         <div class="hud-label">Racha</div>
       </div>
@@ -322,11 +393,18 @@
       </div>
     </div>
 
+    <div class="path-row" id="path-row"></div>
+
     <svg class="waveform" viewBox="0 0 340 26" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0,13 L40,13 L52,3 L64,23 L76,13 L120,13 L132,6 L144,20 L156,13 L200,13 L212,3 L224,23 L236,13 L340,13"/>
     </svg>
 
-    <div class="qcard">
+    <div class="qcard" id="qcard">
+      <div class="boss-ribbon" id="boss-ribbon">🚨 ×2 XP</div>
+      <div class="mascot-row">
+        <div class="mascot-face" id="mascot-face">🧑‍⚕️</div>
+        <div class="bubble" id="mascot-bubble">Dale, vos podés 👀</div>
+      </div>
       <span class="tag" id="qtag">🫁 Salbutamol</span>
       <p class="qtext" id="qtext">Cargando…</p>
       <div class="opts" id="opts"></div>
@@ -344,9 +422,11 @@
       <div class="sub">Ronda terminada</div>
       <div class="big" id="sum-score">0/12</div>
       <div class="sub" id="sum-sub">Racha máxima: 0</div>
+      <div class="headline" id="sum-line"></div>
     </div>
 
     <div class="level-up" id="level-up"></div>
+    <div class="level-up" id="badges-unlocked"></div>
 
     <div class="card">
       <p class="section-label">Dominio por protocolo (histórico)</p>
@@ -380,6 +460,7 @@
 /* ---------------- question bank ---------------- */
 // cat: 'salbu' | 'adren' | 'mixed'  (mixed only appears in modo Mixto)
 // reveal: false hides the protocol tag (used for discrimination questions)
+// boss: true marks an extra-tricky trap question (visual flair + 2x XP)
 const BANK = [
   // ---- SALBUTAMOL ----
   {cat:'salbu', reveal:true, q:'Niño de 15 kg con crisis asmática. Según la tabla de peso, ¿qué dosis de salbutamol nebulizado corresponde?',
@@ -389,7 +470,7 @@ const BANK = [
     opts:['5 mg','2,5 mg','7,5 mg','10 mg'], correct:'5 mg',
     exp:'≥20 kg = 5 mg. Esa es también la dosis máxima por nebulización, independiente de cuánto pese más.'},
   {cat:'salbu', reveal:true, q:'Lactante de 8 kg con broncoespasmo. ¿Qué dosis de salbutamol le corresponde?',
-    opts:['2,5 mg','1,2 mg','5 mg','0,15 mg'], correct:'2,5 mg',
+    opts:['2,5 mg','1,2 mg','5 mg','0,15 mg'], correct:'2,5 mg', boss:true,
     exp:'0,15 mg/kg × 8 kg = 1,2 mg, pero es menor que la dosis mínima permitida (2,5 mg), así que se administra el mínimo: 2,5 mg.'},
   {cat:'salbu', reveal:true, q:'¿Cuál es la dosis de salbutamol nebulizado expresada por kilo?',
     opts:['0,15 mg/kg/dosis','0,5 mg/kg/dosis','1 mg/kg/dosis','0,05 mg/kg/dosis'], correct:'0,15 mg/kg/dosis',
@@ -424,13 +505,13 @@ const BANK = [
     opts:['5 mL','10 mL','2,5 mL','7 mL'], correct:'5 mL',
     exp:'0,5 mL/kg × 10 kg = 5 mL, justo en el tope máximo permitido.'},
   {cat:'adren', reveal:true, q:'Niño de 14 kg con estridor por laringitis obstructiva. ¿Dosis de adrenalina nebulizada?',
-    opts:['5 mL','7 mL','6 mL','4 mL'], correct:'5 mL',
+    opts:['5 mL','7 mL','6 mL','4 mL'], correct:'5 mL', boss:true,
     exp:'0,5 mL/kg × 14 kg = 7 mL, pero el máximo absoluto es 5 mL — se administran 5 mL, no más.'},
   {cat:'adren', reveal:true, q:'¿Cuál es la dosis máxima de adrenalina nebulizada para croup?',
     opts:['5 mL','3 mL','8 mL','10 mL'], correct:'5 mL',
     exp:'El techo es 5 mL por nebulización, equivalente a 5 mg de adrenalina, sin importar cuánto más pese el niño.'},
   {cat:'adren', reveal:true, q:'Niño de 4 kg con croup: la dosis calculada de adrenalina da 2 mL. ¿Qué corresponde hacer antes de nebulizar?',
-    opts:['Completar con SF hasta 4–5 mL','Duplicar la dosis de adrenalina','No nebulizar, es muy poco volumen','Usar adrenalina no diluida al doble'], correct:'Completar con SF hasta 4–5 mL',
+    opts:['Completar con SF hasta 4–5 mL','Duplicar la dosis de adrenalina','No nebulizar, es muy poco volumen','Usar adrenalina no diluida al doble'], correct:'Completar con SF hasta 4–5 mL', boss:true,
     exp:'La dosis de fármaco no cambia (siguen siendo 2 mL = 2 mg de adrenalina): sólo se agrega SF para que el volumen total a nebulizar sea suficiente (4–5 mL) y el equipo nebulice bien.'},
   {cat:'adren', reveal:true, q:'Si el volumen calculado de adrenalina queda cercano a 4–5 mL, ¿hace falta diluir?',
     opts:['No, se administra directo','Sí, siempre se diluye al doble','Sí, se diluye a la mitad','Sólo en menores de 1 año'], correct:'No, se administra directo',
@@ -474,7 +555,7 @@ const BANK = [
     opts:['Sentado o semisentado','Acostado boca abajo','De pie','No importa la posición'], correct:'Sentado o semisentado',
     exp:'Sentado o semisentado favorece la mecánica respiratoria en ambos escenarios.'},
   {cat:'mixed', reveal:true, q:'La Adrenalina L viene a 1 mg/mL. Si la dosis es 0,5 mg/kg, ¿a cuántos mL/kg equivale?',
-    opts:['0,5 mL/kg','1 mL/kg','0,05 mL/kg','5 mL/kg'], correct:'0,5 mL/kg',
+    opts:['0,5 mL/kg','1 mL/kg','0,05 mL/kg','5 mL/kg'], correct:'0,5 mL/kg', boss:true,
     exp:'Como la concentración es 1 mg por 1 mL, mg/kg y mL/kg coinciden numéricamente: 0,5 mg/kg = 0,5 mL/kg.'},
   {cat:'mixed', reveal:true, q:'¿Cuál de los dos protocolos exige asociar siempre un corticoide sistémico?',
     opts:['Adrenalina para croup (dexametasona)','Salbutamol para crisis asmática','Ambos por igual','Ninguno de los dos'], correct:'Adrenalina para croup (dexametasona)',
@@ -492,9 +573,25 @@ const BANK = [
     exp:'Estridor + tos perruna + disfonía es el cuadro clásico de croup (laringitis obstructiva) → adrenalina nebulizada + dexametasona.'},
 ];
 
+const BADGES = [
+  {id:'streak5', icon:'🎯', name:'Racha de 5'},
+  {id:'streak10', icon:'🔥', name:'Racha de 10'},
+  {id:'salbuMaster', icon:'🫁', name:'Maestro Salbutamol'},
+  {id:'croupTamer', icon:'👶', name:'Domador del Croup'},
+  {id:'perfectMixed', icon:'💯', name:'Ronda perfecta'},
+  {id:'jefe', icon:'👑', name:'Jefe de Residentes'},
+];
+
+const IDLE_LINES = ['Dale, vos podés 👀','A ver qué sabés 🧐','Pensalo con calma','¿Qué dice el protocolo?','Tranqui, respirá y contestá 😌'];
+const HAPPY_LINES = ['¡Sipo! 🎯','Ahí está, seco 💪','Exacto, como corresponde 🫡','Eso, dominado 🔥','Bien ahí, colega 🩺'];
+const SOFT_LINES = ['Uy, esa no era. Dale, la próxima 💛','Casi, mirá el porqué 👇','Nah, pero con la explicación va a pegar','Fail momentáneo, seguimos 🙂'];
+
+function randomOf(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function prefersReducedMotion(){ return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
 /* ---------------- persistent storage ---------------- */
 const STORAGE_KEY = 'nebulizalo-progress';
-let persisted = {xp:0, bestStreak:0, totalRounds:0, salbuCorrect:0, salbuTotal:0, adrenCorrect:0, adrenTotal:0};
+let persisted = {xp:0, bestStreak:0, totalRounds:0, salbuCorrect:0, salbuTotal:0, adrenCorrect:0, adrenTotal:0, badges:[], soundOn:true};
 let storageOK = true;
 
 async function loadPersisted(){
@@ -505,6 +602,7 @@ async function loadPersisted(){
       persisted = Object.assign(persisted, parsed);
     }
   }catch(e){ storageOK = false; }
+  refreshSoundIcon();
   renderProgressTeaser();
 }
 async function savePersisted(){
@@ -527,23 +625,61 @@ function levelInfo(xp){
   return current;
 }
 
+/* ---------------- sound ---------------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  }
+}
+function tone(freq, dur, delay, type){
+  if(!persisted.soundOn) return;
+  ensureAudio();
+  if(!audioCtx) return;
+  setTimeout(function(){
+    try{
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type || 'sine';
+      o.frequency.value = freq;
+      o.connect(g); g.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.18, now+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+      o.start(now); o.stop(now+dur+0.02);
+    }catch(e){}
+  }, delay || 0);
+}
+function sfxCorrect(){ tone(660,.12,0); tone(880,.14,90); }
+function sfxWrong(){ tone(220,.22,0); }
+function sfxStreak(){ tone(660,.1,0); tone(880,.1,80); tone(1046,.16,160); }
+function sfxBadge(){ tone(523,.12,0); tone(659,.12,90); tone(784,.12,180); tone(1046,.2,270); }
+
+const soundToggle = document.getElementById('sound-toggle');
+function refreshSoundIcon(){ soundToggle.textContent = persisted.soundOn ? '🔊' : '🔇'; }
+soundToggle.addEventListener('click', function(){
+  persisted.soundOn = !persisted.soundOn;
+  refreshSoundIcon();
+  savePersisted();
+});
+
 /* ---------------- state ---------------- */
 let mode = 'mixto';
 let roundLen = 12;
-let round = null; // {questions, idx, score, streak, maxStreak, catStats:{salbu:{c,t}, adren:{c,t}}, missed:[]}
+let round = null;
 
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
     const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+    const tmp = a[i]; a[i]=a[j]; a[j]=tmp;
   }
   return a;
 }
-
 function poolForMode(m){
   if(m==='mixto') return BANK;
-  return BANK.filter(q=>q.cat===m);
+  return BANK.filter(function(q){ return q.cat===m; });
 }
 
 /* ---------------- DOM refs ---------------- */
@@ -553,24 +689,24 @@ const screens = {
   summary: document.getElementById('screen-summary'),
 };
 function showScreen(name){
-  Object.values(screens).forEach(s=>s.classList.remove('active'));
+  Object.keys(screens).forEach(function(k){ screens[k].classList.remove('active'); });
   screens[name].classList.add('active');
 }
 
 const modeRow = document.getElementById('mode-row');
 const lenRow = document.getElementById('len-row');
-modeRow.addEventListener('click', e=>{
+modeRow.addEventListener('click', function(e){
   const pill = e.target.closest('.pill'); if(!pill) return;
   mode = pill.dataset.mode;
-  [...modeRow.children].forEach(p=>p.classList.toggle('on', p===pill));
+  [].forEach.call(modeRow.children, function(p){ p.classList.toggle('on', p===pill); });
 });
-lenRow.addEventListener('click', e=>{
+lenRow.addEventListener('click', function(e){
   const pill = e.target.closest('.pill'); if(!pill) return;
   roundLen = parseInt(pill.dataset.len,10);
-  [...lenRow.children].forEach(p=>p.classList.toggle('on', p===pill));
+  [].forEach.call(lenRow.children, function(p){ p.classList.toggle('on', p===pill); });
 });
 function pillKeyHandler(row){
-  row.addEventListener('keydown', e=>{
+  row.addEventListener('keydown', function(e){
     if(e.key==='Enter' || e.key===' '){ e.preventDefault(); e.target.click(); }
   });
 }
@@ -578,16 +714,25 @@ pillKeyHandler(modeRow); pillKeyHandler(lenRow);
 
 const cheatToggle = document.getElementById('cheat-toggle');
 const cheatsheet = document.getElementById('cheatsheet');
-cheatToggle.addEventListener('click', ()=>{
+cheatToggle.addEventListener('click', function(){
   const open = cheatsheet.classList.toggle('open');
   cheatToggle.setAttribute('aria-expanded', open);
   cheatToggle.textContent = open ? '📋 Ocultar resumen' : '📋 Ver resumen antes de jugar';
 });
 
+function renderBadgeShelf(){
+  const row = document.getElementById('badge-row');
+  row.innerHTML = BADGES.map(function(b){
+    const unlocked = persisted.badges.indexOf(b.id) !== -1;
+    return '<div class="badge-chip'+(unlocked?' unlocked':'')+'">'+b.icon+'<div class="blabel">'+b.name+'</div></div>';
+  }).join('');
+}
+
 function renderProgressTeaser(){
   const lvl = levelInfo(persisted.xp);
   document.getElementById('progress-teaser').innerHTML =
     '<span>' + lvl.icon + ' <b>' + lvl.name + '</b></span><span>Racha récord: <b>' + persisted.bestStreak + '</b> 🔥</span>';
+  renderBadgeShelf();
 }
 
 document.getElementById('start-btn').addEventListener('click', startRound);
@@ -601,6 +746,8 @@ function startRound(){
     score: 0,
     streak: 0,
     maxStreak: 0,
+    xpGained: 0,
+    results: [],
     catStats: {salbu:{c:0,t:0}, adren:{c:0,t:0}},
     missed: [],
   };
@@ -618,15 +765,27 @@ const explanation = document.getElementById('explanation');
 const nextBtn = document.getElementById('next-btn');
 const hudStreak = document.getElementById('hud-streak');
 const hudProgress = document.getElementById('hud-progress');
+const mascotFace = document.getElementById('mascot-face');
+const mascotBubble = document.getElementById('mascot-bubble');
+const qcardEl = document.getElementById('qcard');
+const bossRibbon = document.getElementById('boss-ribbon');
+
+function sayMascot(mood, text){
+  const emojis = {idle:'🧑\u200d⚕️', happy:'😄', soft:'🙂', hype:'🤩', boss:'🚨'};
+  mascotFace.textContent = emojis[mood] || '🧑\u200d⚕️';
+  mascotBubble.textContent = text;
+  mascotFace.classList.remove('bounce');
+  void mascotFace.offsetWidth;
+  mascotFace.classList.add('bounce');
+}
 
 function effectiveCat(q){
-  // for scoring, 'mixed' scenario/fact questions don't map to a single protocol ring
   return q.cat === 'salbu' ? 'salbu' : (q.cat === 'adren' ? 'adren' : null);
 }
 
 function updateRings(){
   const s = round.catStats.salbu, a = round.catStats.adren;
-  const pct = (c,t)=> t? Math.round(c/t*100) : null;
+  const pct = function(c,t){ return t ? Math.round(c/t*100) : null; };
   const sp = pct(s.c,s.t), ap = pct(a.c,a.t);
   const circ = 75.4;
   const salbuFill = document.getElementById('ring-salbu-fill');
@@ -637,11 +796,42 @@ function updateRings(){
   document.getElementById('ring-adren-txt').textContent = ap===null ? '–' : ap+'%';
 }
 
+function renderPathDots(){
+  const row = document.getElementById('path-row');
+  row.innerHTML = round.questions.map(function(q,i){
+    let cls='path-dot';
+    const r = round.results[i];
+    if(r===true) cls+=' correct';
+    else if(r===false) cls+=' wrong';
+    else if(i===round.idx) cls+=' current';
+    return '<div class="'+cls+'"></div>';
+  }).join('');
+}
+
+function floatXP(amount){
+  const wrap = document.getElementById('hud-streak-wrap');
+  const el = document.createElement('div');
+  el.className='floatxp';
+  el.textContent = '+'+amount;
+  wrap.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 820);
+}
+
 function renderQuestion(){
   const q = round.questions[round.idx];
   hudStreak.textContent = round.streak;
   hudProgress.textContent = (round.idx+1) + '/' + round.questions.length;
   updateRings();
+  renderPathDots();
+
+  qcardEl.classList.toggle('boss', !!q.boss);
+  bossRibbon.classList.toggle('show', !!q.boss);
+
+  if(q.boss){
+    sayMascot('boss', '🚨 Ojo con esta, de las que trampean en el examen');
+  } else {
+    sayMascot('idle', randomOf(IDLE_LINES));
+  }
 
   if(q.reveal){
     if(q.cat==='salbu'){ qtag.textContent='🫁 Salbutamol'; qtag.className='tag salbu'; }
@@ -656,11 +846,11 @@ function renderQuestion(){
 
   const shuffledOpts = shuffle(q.opts);
   optsEl.innerHTML = '';
-  shuffledOpts.forEach(optText=>{
+  shuffledOpts.forEach(function(optText){
     const btn = document.createElement('button');
     btn.className = 'opt';
     btn.textContent = optText;
-    btn.addEventListener('click', ()=>selectAnswer(optText, q));
+    btn.addEventListener('click', function(){ selectAnswer(optText, q); });
     optsEl.appendChild(btn);
   });
 
@@ -675,12 +865,12 @@ function showToast(msg){
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 1400);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1400);
 }
 
 function selectAnswer(chosen, q){
-  const buttons = [...optsEl.children];
-  buttons.forEach(b=>{
+  const buttons = [].slice.call(optsEl.children);
+  buttons.forEach(function(b){
     b.disabled = true;
     if(b.textContent === q.correct) b.classList.add('correct');
     else if(b.textContent === chosen) b.classList.add('wrong');
@@ -693,28 +883,43 @@ function selectAnswer(chosen, q){
     round.catStats[cat].t++;
     if(isCorrect) round.catStats[cat].c++;
   }
+  round.results[round.idx] = isCorrect;
 
   if(isCorrect){
     round.score++;
     round.streak++;
     round.maxStreak = Math.max(round.maxStreak, round.streak);
+    const bonus = round.streak>=10 ? 10 : (round.streak>=5 ? 5 : 0);
+    const gained = (10+bonus) * (q.boss ? 2 : 1);
+    round.xpGained += gained;
+    floatXP(gained);
     feedback.classList.add('good');
     verdict.textContent = '✅ Correcto';
-    if([3,5,8,12,16].includes(round.streak)) showToast('¡En racha! 🔥 x'+round.streak);
+    if([3,5,8,10,12,16].indexOf(round.streak) !== -1){
+      showToast('¡En racha! 🔥 x'+round.streak);
+      sayMascot('hype', 'Racha x'+round.streak+' 🔥 seguí así');
+      sfxStreak();
+    } else {
+      sayMascot('happy', randomOf(HAPPY_LINES));
+      sfxCorrect();
+    }
   } else {
     round.streak = 0;
     round.missed.push({q: q.q, a: q.correct, exp: q.exp});
     feedback.classList.add('bad');
     verdict.textContent = '❌ No era esa';
+    sayMascot('soft', randomOf(SOFT_LINES));
+    sfxWrong();
   }
   explanation.textContent = q.exp;
   feedback.classList.add('show');
   nextBtn.classList.add('show');
   updateRings();
   hudStreak.textContent = round.streak;
+  renderPathDots();
 }
 
-nextBtn.addEventListener('click', ()=>{
+nextBtn.addEventListener('click', function(){
   round.idx++;
   if(round.idx >= round.questions.length){
     endRound();
@@ -723,9 +928,50 @@ nextBtn.addEventListener('click', ()=>{
   }
 });
 
+/* ---------------- badges ---------------- */
+function checkBadges(roundResult){
+  const newly = [];
+  function unlock(id){
+    if(persisted.badges.indexOf(id) === -1){
+      persisted.badges.push(id);
+      newly.push(id);
+    }
+  }
+  if(roundResult.maxStreak>=5) unlock('streak5');
+  if(roundResult.maxStreak>=10) unlock('streak10');
+  if(mode==='salbu' && roundResult.total>=8 && roundResult.score===roundResult.total) unlock('salbuMaster');
+  if(mode==='adren' && roundResult.total>=8 && roundResult.score===roundResult.total) unlock('croupTamer');
+  if(mode==='mixto' && roundResult.score===roundResult.total) unlock('perfectMixed');
+  if(persisted.xp>=1500) unlock('jefe');
+  return newly;
+}
+
+/* ---------------- confetti ---------------- */
+function burstConfetti(){
+  if(prefersReducedMotion()) return;
+  const colors=['#5ab2ff','#3ddba0','#ffc266','#ff8577'];
+  for(let i=0;i<26;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.left = Math.random()*100+'vw';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration = (1.6+Math.random()*1.2)+'s';
+    el.style.transform = 'rotate('+Math.floor(Math.random()*360)+'deg)';
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 3000);
+  }
+}
+
+function performanceLine(pct){
+  if(pct>=0.9) return '¡Andás volando! 🚀 Esto ya te lo sabés.';
+  if(pct>=0.7) return 'Bien ahí, casi perfecto 💪';
+  if(pct>=0.5) return 'Vamos mejorando, dale otra vuelta 🔁';
+  return 'Repasemos con calma, para eso está el resumen de abajo 👇';
+}
+
 /* ---------------- summary ---------------- */
 async function endRound(){
-  const xpGained = round.score*10 + round.maxStreak*2;
+  const xpGained = round.xpGained || 0;
   const prevLevel = levelInfo(persisted.xp);
 
   persisted.xp += xpGained;
@@ -736,11 +982,14 @@ async function endRound(){
   persisted.adrenCorrect += round.catStats.adren.c;
   persisted.adrenTotal += round.catStats.adren.t;
 
+  const roundResult = {score:round.score, total:round.questions.length, maxStreak:round.maxStreak};
+  const newlyUnlocked = checkBadges(roundResult);
   const newLevel = levelInfo(persisted.xp);
   await savePersisted();
 
   document.getElementById('sum-score').textContent = round.score + '/' + round.questions.length;
   document.getElementById('sum-sub').textContent = 'Racha máxima: ' + round.maxStreak + '  ·  +' + xpGained + ' XP';
+  document.getElementById('sum-line').textContent = performanceLine(round.score/round.questions.length);
 
   const levelUpEl = document.getElementById('level-up');
   if(newLevel.name !== prevLevel.name){
@@ -748,6 +997,18 @@ async function endRound(){
     levelUpEl.classList.add('show');
   } else {
     levelUpEl.classList.remove('show');
+  }
+
+  const badgesEl = document.getElementById('badges-unlocked');
+  if(newlyUnlocked.length){
+    badgesEl.innerHTML = '🏅 ¡Nueva insignia! ' + newlyUnlocked.map(function(id){
+      const b = BADGES.filter(function(x){ return x.id===id; })[0];
+      return b.icon+' '+b.name;
+    }).join(' · ');
+    badgesEl.classList.add('show');
+  } else {
+    badgesEl.innerHTML='';
+    badgesEl.classList.remove('show');
   }
 
   const sp = persisted.salbuTotal ? Math.round(persisted.salbuCorrect/persisted.salbuTotal*100) : 0;
@@ -763,12 +1024,19 @@ async function endRound(){
   if(round.missed.length===0){
     missedEl.innerHTML = '<p class="missed-none">🎯 Ronda perfecta, ni una fallada.</p>';
   } else {
-    missedEl.innerHTML = '<p class="section-label">Para repasar</p>' + round.missed.map(m=>
-      '<div class="missed-item"><div class="q">'+escapeHtml(m.q)+'</div><div class="a">Correcta: '+escapeHtml(m.a)+'</div><div>'+escapeHtml(m.exp)+'</div></div>'
-    ).join('');
+    missedEl.innerHTML = '<p class="section-label">Para repasar</p>' + round.missed.map(function(m){
+      return '<div class="missed-item"><div class="q">'+escapeHtml(m.q)+'</div><div class="a">Correcta: '+escapeHtml(m.a)+'</div><div>'+escapeHtml(m.exp)+'</div></div>';
+    }).join('');
   }
 
   renderProgressTeaser();
+
+  const bigMoment = (round.score===round.questions.length) || newlyUnlocked.length>0 || (newLevel.name!==prevLevel.name);
+  if(bigMoment){
+    burstConfetti();
+    sfxBadge();
+  }
+
   showScreen('summary');
 }
 
@@ -779,7 +1047,7 @@ function escapeHtml(str){
 }
 
 document.getElementById('btn-again').addEventListener('click', startRound);
-document.getElementById('btn-mode').addEventListener('click', ()=>showScreen('start'));
+document.getElementById('btn-mode').addEventListener('click', function(){ showScreen('start'); });
 
 /* ---------------- init ---------------- */
 loadPersisted();
