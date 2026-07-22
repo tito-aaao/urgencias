@@ -735,6 +735,24 @@ const BANK = [
   {topic:'tratamiento', cat:'cronico', reveal:true, q:'Niño con asma en tratamiento con CI en dosis baja que logra buen control de síntomas durante 1 año. ¿Qué se recomienda hacer con la terapia?',
     opts:['Se puede suspender la terapia luego de 1 año de buen control','Debe mantenerse de por vida sin excepción','Debe duplicarse la dosis como consolidación','Debe cambiarse a corticoide oral'], correct:'Se puede suspender la terapia luego de 1 año de buen control',
     exp:'En el caso de uso de CI en dosis baja, el texto indica que la terapia se suspende luego de 1 año de buen control.', boss:true},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿A partir de qué frecuencia de crisis se debe iniciar tratamiento preventivo con corticoides inhalados, y cada cuánto se reevalúa esa decisión?',
+    opts:['Más de 3 crisis/año; reevaluar a los 3–6 meses','Más de 1 crisis/año; reevaluar cada semana','Sólo con crisis graves; reevaluar al año','Nunca se inicia preventivo en menores de 5 años'], correct:'Más de 3 crisis/año; reevaluar a los 3–6 meses', boss:true,
+    exp:'Con crisis infrecuentes (≤3/año) se maneja sólo el episodio con broncodilatador + corticoide oral. Con crisis frecuentes (>3/año) se inicia CI preventivo, reevaluando a los 3–6 meses si el diagnóstico de asma se sostiene.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'Cuando un paciente asmático logra buen control de síntomas y se decide bajar un escalón de tratamiento, ¿qué reducción de corticoide inhalado sugiere el MINSAL?',
+    opts:['Disminución en un 50%','Suspensión inmediata total','Aumentar la dosis un 50% antes de bajar','Disminución de sólo un 10%'], correct:'Disminución en un 50%',
+    exp:'Al bajar de escalón manteniendo el control de síntomas, el MINSAL sugiere disminuir la dosis de CI en un 50%, no suspenderla de golpe.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Desde qué edad recomienda el MINSAL asociar un B2 de acción larga (LABA) al corticoide inhalado en niños asmáticos?',
+    opts:['Desde los 4 años','Desde el nacimiento','Sólo desde los 12 años','Nunca se recomienda en pediatría'], correct:'Desde los 4 años', boss:true,
+    exp:'El MINSAL recomienda LABA sobre los 4 años; GINA lo recomienda desde los 5, y otras guías recién después de los 12 — no hay evidencia de seguridad ni eficacia bajo los 5 años.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿En qué situación son particularmente efectivos los antileucotrienos (LTRA, como montelukast), en comparación con el CI?',
+    opts:['Asma inducida por ejercicio o con rinitis alérgica concomitante','Crisis graves con tórax silente','Bronquiolitis aguda del lactante','Croup con estridor'], correct:'Asma inducida por ejercicio o con rinitis alérgica concomitante',
+    exp:'Los LTRA son en general menos eficaces que el CI, pero particularmente útiles en asma inducida por ejercicio o cuando hay rinitis alérgica asociada.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Qué significa clínicamente el uso muy frecuente de salbutamol de rescate (SABA) en un niño asmático?',
+    opts:['Es una señal de necesidad de terapia antiinflamatoria (controladora)','Significa que se debe suspender el salbutamol','Indica una sobredosis inminente','No tiene ningún significado clínico'], correct:'Es una señal de necesidad de terapia antiinflamatoria (controladora)',
+    exp:'El uso muy frecuente de SABA señala que falta terapia antiinflamatoria de base, no que haya que seguir aumentando el rescatador.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Qué riesgos son muy improbables al usar corticoides inhalados en dosis BAJAS?',
+    opts:['Cataratas y desmineralización ósea','Efecto en la talla durante el primer año','Candidiasis oral si no se enjuaga la boca','Taquicardia'], correct:'Cataratas y desmineralización ósea',
+    exp:'Con dosis bajas de CI, cataratas y desmineralización son muy improbables; el efecto en la talla sí está descrito en el primer año de uso, aunque no es progresivo.'},
 
   // ================= TRATAMIENTO :: COMPARTIDAS / DISCRIMINACIÓN (nebulización) =================
   {topic:'tratamiento', cat:'mixed', reveal:true, q:'¿Cuál es el flujo de O2 recomendado para nebulizar, tanto con salbutamol como con adrenalina?',
@@ -927,7 +945,8 @@ const CAT_CHEAT = '<div class="cheat-card salbu"><b>📊 Tabla 2 · Score de Tal
 const TRAT_CHEAT = '<div class="cheat-card salbu"><b>🫁 Salbutamol (crisis asmática)</b>0,15 mg/kg/dosis (mín 2,5 mg – máx 5 mg) · &lt;20 kg = 2,5 mg · ≥20 kg = 5 mg · SF hasta 3–4 mL · O2 6–8 L/min · 10–15 min.</div>'+
   '<div class="cheat-card adren"><b>👶 Adrenalina L (croup)</b>1:1000 = 1 mg/mL · 0,5 mL/kg (máx 5 mL) · si &lt;4 mL completar con SF hasta 4–5 mL · O2 6–8 L/min · 10–15 min · observar 2–3 h · siempre con dexametasona.</div>'+
   '<div class="cheat-card salbu"><b>📋 Algoritmo por gravedad (crisis de asma)</b>'+ALGO_TABLE_HTML+'</div>'+
-  '<div class="cheat-card adren"><b>🌍 GINA · pasos de tratamiento crónico</b>'+GINA_TABLE_HTML+'</div>';
+  '<div class="cheat-card adren"><b>🌍 GINA · pasos de tratamiento crónico</b>'+GINA_TABLE_HTML+'</div>'+
+  '<div class="cheat-card salbu"><b>💊 Posología crónico · umbrales</b>Budesonida 200–400 ug/día · Fluticasona 100–200 ug/día · Montelukast 4–5 mg/día · ≤3 crisis/año = sólo manejo del episodio · &gt;3 crisis/año = iniciar CI preventivo (reevaluar 3–6 meses) · step-down: MINSAL sugiere bajar CI 50% · LABA: MINSAL ≥4 años, GINA ≥5, otras guías ≥12.</div>';
 
 function cheatContentFor(topic){
   if(topic==='clinica') return CLIN_CHEAT;
