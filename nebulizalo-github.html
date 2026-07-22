@@ -3,121 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Nebulízalo — Salbutamol vs. Adrenalina</title>
+<title>Nebulízalo — SBO, Bronquiolitis y Asma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0c1120;
-    --bg-2:#0f1730;
-    --surface:#161f3d;
-    --surface-2:#1d2850;
-    --line:#2b3766;
-    --text:#e9ecf9;
-    --text-dim:#9aa4cc;
-    --salbu:#5ab2ff;
-    --salbu-soft:rgba(90,178,255,.14);
-    --adren:#3ddba0;
-    --adren-soft:rgba(61,219,160,.14);
-    --warn:#ff8577;
-    --warn-soft:rgba(255,133,119,.15);
-    --gold:#ffc266;
+    --bg:#0c1120; --bg-2:#0f1730; --surface:#161f3d; --surface-2:#1d2850; --line:#2b3766;
+    --text:#e9ecf9; --text-dim:#9aa4cc;
+    --salbu:#5ab2ff; --salbu-soft:rgba(90,178,255,.14);
+    --adren:#3ddba0; --adren-soft:rgba(61,219,160,.14);
+    --exam:#b78bff; --exam-soft:rgba(183,139,255,.16);
+    --warn:#ff8577; --warn-soft:rgba(255,133,119,.15);
+    --gold:#ffc266; --gold-soft:rgba(255,194,102,.16);
     --radius:18px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'IBM Plex Sans',system-ui,sans-serif;
-    min-height:100vh;
-    overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
   h1,h2,h3,.display{font-family:'Space Grotesk',system-ui,sans-serif;}
   .mono{font-family:'JetBrains Mono',monospace;}
   button{font-family:inherit;}
 
-  /* ambient mist */
-  #mist{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
-    radial-gradient(ellipse at top, var(--bg-2), var(--bg) 60%);}
+  #mist{position:fixed;inset:0;z-index:-1;overflow:hidden;background:radial-gradient(ellipse at top, var(--bg-2), var(--bg) 60%);}
   .puff{position:absolute;border-radius:50%;filter:blur(60px);opacity:.16;}
   .puff.s1{width:340px;height:340px;background:var(--salbu);top:-80px;left:-60px;}
   .puff.s2{width:300px;height:300px;background:var(--adren);bottom:-100px;right:-60px;}
-  .puff.s3{width:220px;height:220px;background:var(--salbu);bottom:20%;left:60%;}
+  .puff.s3{width:220px;height:220px;background:var(--exam);bottom:20%;left:60%;}
   @media (prefers-reduced-motion: no-preference){
     .puff{animation:drift 22s ease-in-out infinite alternate;}
-    .puff.s2{animation-duration:28s;}
-    .puff.s3{animation-duration:18s;}
+    .puff.s2{animation-duration:28s;} .puff.s3{animation-duration:18s;}
   }
-  @keyframes drift{
-    0%{transform:translate(0,0) scale(1);}
-    100%{transform:translate(30px,-24px) scale(1.12);}
-  }
+  @keyframes drift{0%{transform:translate(0,0) scale(1);}100%{transform:translate(30px,-24px) scale(1.12);}}
 
-  #sound-toggle{
-    position:fixed;top:14px;right:16px;z-index:15;
-    width:38px;height:38px;border-radius:50%;
-    border:1px solid var(--line);background:var(--surface);color:var(--text);
-    font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;
-  }
+  #sound-toggle{position:fixed;top:14px;right:16px;z-index:15;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   #sound-toggle:focus-visible{outline:2px solid var(--gold);}
 
   #app{max-width:560px;margin:0 auto;padding:18px 16px 40px;min-height:100vh;display:flex;flex-direction:column;}
-
   .screen{display:none;flex:1;flex-direction:column;}
   .screen.active{display:flex;}
 
-  /* ---------- start screen ---------- */
+  .back-btn{background:none;border:none;color:var(--text-dim);font-size:13px;font-weight:600;cursor:pointer;padding:6px 0;margin-bottom:6px;text-align:left;align-self:flex-start;}
+  .back-btn:focus-visible{outline:2px solid var(--gold);}
+
   .brand{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
   .brand-icon{font-size:30px;line-height:1;}
-  .brand h1{font-size:26px;margin:0;letter-spacing:-.02em;}
-  .brand-sub{color:var(--text-dim);font-size:14px;margin:2px 0 22px;}
+  .brand h1{font-size:24px;margin:0;letter-spacing:-.02em;}
+  .brand-sub{color:var(--text-dim);font-size:13.5px;margin:2px 0 20px;line-height:1.4;}
 
-  .card{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:18px;
-  }
-
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;}
   .section-label{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-dim);margin:0 0 10px;font-weight:600;}
 
   .pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
-  .pill{
-    flex:1 1 auto;
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    color:var(--text-dim);
-    border-radius:999px;
-    padding:11px 14px;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-    text-align:center;
-    transition:all .15s ease;
-    -webkit-tap-highlight-color:transparent;
-  }
+  .pill{flex:1 1 auto;background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);border-radius:999px;padding:11px 14px;font-size:13.5px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s ease;-webkit-tap-highlight-color:transparent;}
   .pill:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
   .pill.on{color:var(--bg);border-color:transparent;}
-  .pill[data-mode="mixto"].on{background:linear-gradient(135deg,var(--salbu),var(--adren));}
-  .pill[data-mode="salbu"].on{background:var(--salbu);}
-  .pill[data-mode="adren"].on{background:var(--adren);}
+  .pill[data-sub="mixto"].on{background:linear-gradient(135deg,var(--salbu),var(--adren));}
+  .pill[data-sub="salbu"].on{background:var(--salbu);}
+  .pill[data-sub="adren"].on{background:var(--adren);}
+  .pill[data-sub="manejo"].on, .pill[data-sub="cronico"].on{background:var(--gold);}
   .pill[data-len].on{background:var(--gold);}
+  .pill[data-topic].on{background:var(--exam);color:var(--bg);}
+  .hidden{display:none !important;}
 
-  .cheat-toggle{
-    width:100%;
-    background:none;
-    border:1px dashed var(--line);
-    color:var(--text-dim);
-    border-radius:14px;
-    padding:12px;
-    font-size:13.5px;
-    font-weight:600;
-    cursor:pointer;
-    margin:14px 0 0;
-  }
+  .cheat-toggle{width:100%;background:none;border:1px dashed var(--line);color:var(--text-dim);border-radius:14px;padding:12px;font-size:13.5px;font-weight:600;cursor:pointer;margin:14px 0 0;}
   .cheat-toggle:focus-visible{outline:2px solid var(--gold);}
   .cheatsheet{display:none;margin-top:12px;gap:10px;flex-direction:column;}
   .cheatsheet.open{display:flex;}
@@ -126,42 +75,58 @@
   .cheat-card.adren{background:var(--adren-soft);border-color:rgba(61,219,160,.35);}
   .cheat-card b{display:block;margin-bottom:4px;font-family:'Space Grotesk';font-size:14px;}
 
-  .start-btn{
-    margin-top:20px;
-    width:100%;
-    border:none;
-    border-radius:16px;
-    padding:16px;
-    font-size:16px;
-    font-weight:700;
-    color:#08101f;
-    background:linear-gradient(135deg,var(--salbu),var(--adren));
-    cursor:pointer;
-    box-shadow:0 8px 24px -8px rgba(90,178,255,.45);
-  }
+  .start-btn{margin-top:20px;width:100%;border:none;border-radius:16px;padding:16px;font-size:16px;font-weight:700;color:#08101f;background:linear-gradient(135deg,var(--salbu),var(--adren));cursor:pointer;box-shadow:0 8px 24px -8px rgba(90,178,255,.45);}
   .start-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
   .start-btn:active{transform:scale(.98);}
 
-  .progress-teaser{display:flex;justify-content:space-between;margin-top:16px;font-size:12.5px;color:var(--text-dim);}
+  .progress-teaser{display:flex;justify-content:space-between;margin-top:4px;font-size:12.5px;color:var(--text-dim);}
   .progress-teaser b{color:var(--text);}
 
-  .badge-row{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin-top:14px;}
-  .badge-chip{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    flex:0 0 auto;width:66px;padding:8px 4px;border-radius:12px;
-    background:var(--surface-2);border:1px solid var(--line);font-size:20px;
-    opacity:.35;filter:grayscale(1);text-align:center;
-  }
+  .badge-row{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin-top:10px;}
+  .badge-chip{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto;width:64px;padding:8px 4px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:19px;opacity:.35;filter:grayscale(1);text-align:center;}
   .badge-chip.unlocked{opacity:1;filter:none;border-color:var(--gold);}
-  .badge-chip .blabel{font-size:8.5px;margin-top:3px;line-height:1.2;color:var(--text-dim);font-weight:600;}
+  .badge-chip .blabel{font-size:8px;margin-top:3px;line-height:1.15;color:var(--text-dim);font-weight:600;}
   .badge-chip.unlocked .blabel{color:var(--text);}
 
+  /* home topic grid */
+  .topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px;}
+  .topic-card{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:15px 13px;text-align:left;cursor:pointer;transition:transform .1s ease;}
+  .topic-card:active{transform:scale(.97);}
+  .topic-card .ticon{font-size:26px;display:block;margin-bottom:6px;}
+  .topic-card .tname{font-family:'Space Grotesk';font-weight:700;font-size:14.5px;margin-bottom:3px;}
+  .topic-card .tdesc{font-size:10.5px;color:var(--text-dim);line-height:1.3;min-height:26px;}
+  .topic-card .tmastery{margin-top:8px;font-size:10.5px;font-weight:700;font-family:'JetBrains Mono';}
+  .topic-card.clinica{border-color:rgba(90,178,255,.35);}
+  .topic-card.examenes{border-color:rgba(183,139,255,.35);}
+  .topic-card.categorizacion{border-color:rgba(255,194,102,.35);}
+  .topic-card.tratamiento{border-color:rgba(61,219,160,.35);}
+  .topic-card.todos{grid-column:1 / -1;border-color:rgba(255,194,102,.4);background:linear-gradient(135deg, rgba(90,178,255,.10), rgba(183,139,255,.10), rgba(255,194,102,.10), rgba(61,219,160,.10));}
+  .tmastery.clinica{color:var(--salbu);} .tmastery.examenes{color:var(--exam);}
+  .tmastery.categorizacion{color:var(--gold);} .tmastery.tratamiento{color:var(--adren);}
+  .tmastery.todos{color:var(--gold);}
+
+  .bank-btn{width:100%;margin-top:14px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:14px;padding:13px;font-weight:700;font-size:13.5px;cursor:pointer;text-align:center;}
+  .bank-btn:focus-visible{outline:2px solid var(--gold);}
+
+  .bank-search{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);font-size:14px;margin:4px 0 12px;}
+  .bank-search::placeholder{color:var(--text-dim);}
+  .bank-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;}
+  .bank-item-tag{font-size:10.5px;font-weight:700;color:var(--text-dim);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+  .bank-item-q{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:9px;font-family:'Space Grotesk';}
+  .bank-toggle{background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .bank-answer{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:12.5px;line-height:1.5;color:var(--text-dim);}
+  .bank-answer b{color:var(--adren);}
+  .bank-answer.show{display:block;}
+
+  /* reference tables (used in cheatsheet + inline in questions) */
+  .q-table-wrap{overflow-x:auto;margin:6px 0 4px;-webkit-overflow-scrolling:touch;}
+  .q-table{width:100%;border-collapse:collapse;font-size:10.5px;min-width:420px;}
+  .q-table th,.q-table td{border:1px solid var(--line);padding:5px 6px;text-align:center;}
+  .q-table th{background:var(--surface-2);color:var(--text-dim);font-weight:700;white-space:nowrap;}
+  .q-table td{color:var(--text);}
+
   /* ---------- game screen ---------- */
-  .hud{
-    display:flex;align-items:center;justify-content:space-between;
-    background:var(--surface);border:1px solid var(--line);border-radius:16px;
-    padding:10px 14px;margin-bottom:10px;gap:8px;
-  }
+  .hud{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin-bottom:10px;gap:8px;}
   .hud-item{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;position:relative;}
   .hud-val{font-family:'JetBrains Mono';font-weight:700;font-size:15px;}
   .hud-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;}
@@ -170,15 +135,8 @@
   .ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
   .ring span{font-size:9px;font-family:'JetBrains Mono';font-weight:700;}
 
-  .floatxp{
-    position:absolute;top:-4px;left:50%;transform:translateX(-50%);
-    font-family:'JetBrains Mono';font-weight:700;color:var(--gold);font-size:13px;
-    pointer-events:none;animation:floatUp .8s ease forwards;z-index:5;
-  }
-  @keyframes floatUp{
-    0%{opacity:1;transform:translateX(-50%) translateY(0);}
-    100%{opacity:0;transform:translateX(-50%) translateY(-26px);}
-  }
+  .floatxp{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono';font-weight:700;color:var(--gold);font-size:13px;pointer-events:none;animation:floatUp .8s ease forwards;z-index:5;}
+  @keyframes floatUp{0%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-26px);}}
 
   .path-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px;}
   .path-dot{width:9px;height:9px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);transition:all .2s ease;}
@@ -186,72 +144,38 @@
   .path-dot.wrong{background:var(--warn);border-color:var(--warn);}
   .path-dot.current{transform:scale(1.5);box-shadow:0 0 0 3px rgba(255,194,102,.3);background:var(--gold);border-color:var(--gold);}
 
-  .waveform{height:22px;margin-bottom:12px;opacity:.85;}
-  .waveform path{
-    fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
-    stroke-dasharray:340;stroke-dashoffset:340;
-  }
-  @media (prefers-reduced-motion: no-preference){
-    .waveform path{animation:trace 3.4s linear infinite;}
-  }
+  .waveform{height:20px;margin-bottom:12px;opacity:.85;}
+  .waveform path{fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:340;stroke-dashoffset:340;}
+  @media (prefers-reduced-motion: no-preference){.waveform path{animation:trace 3.4s linear infinite;}}
   @keyframes trace{to{stroke-dashoffset:0;}}
 
   .qcard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px 18px;flex:1;display:flex;flex-direction:column;position:relative;transition:border-color .2s ease;}
   .qcard.boss{border-color:var(--warn);animation:pulseBoss 1.6s ease-in-out infinite;}
-  @media (prefers-reduced-motion: reduce){ .qcard.boss{animation:none;} }
-  @keyframes pulseBoss{
-    0%,100%{box-shadow:0 0 0 1px var(--warn),0 0 16px -8px rgba(255,133,119,.5);}
-    50%{box-shadow:0 0 0 1px var(--warn),0 0 28px -6px rgba(255,133,119,.8);}
-  }
-  .boss-ribbon{
-    display:none;position:absolute;top:14px;right:14px;
-    background:var(--warn);color:#3a0e0a;font-weight:700;font-size:10.5px;
-    padding:4px 10px;border-radius:999px;letter-spacing:.02em;
-  }
+  @media (prefers-reduced-motion: reduce){.qcard.boss{animation:none;}}
+  @keyframes pulseBoss{0%,100%{box-shadow:0 0 0 1px var(--warn),0 0 16px -8px rgba(255,133,119,.5);}50%{box-shadow:0 0 0 1px var(--warn),0 0 28px -6px rgba(255,133,119,.8);}}
+  .boss-ribbon{display:none;position:absolute;top:14px;right:14px;background:var(--warn);color:#3a0e0a;font-weight:700;font-size:10.5px;padding:4px 10px;border-radius:999px;letter-spacing:.02em;}
   .boss-ribbon.show{display:block;}
 
-  .mascot-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;}
-  .mascot-face{font-size:32px;line-height:1;flex:0 0 auto;transition:transform .1s ease;}
+  .mascot-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+  .mascot-face{font-size:30px;line-height:1;flex:0 0 auto;transition:transform .1s ease;}
   .mascot-face.bounce{animation:bounce .5s ease;}
-  @media (prefers-reduced-motion: reduce){ .mascot-face.bounce{animation:none;} }
-  @keyframes bounce{
-    0%{transform:scale(1) rotate(0);}
-    30%{transform:scale(1.25) rotate(-8deg);}
-    60%{transform:scale(.94) rotate(5deg);}
-    100%{transform:scale(1) rotate(0);}
-  }
-  .bubble{
-    background:var(--surface-2);border:1px solid var(--line);
-    border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:13px;font-weight:600;
-    flex:1;min-height:18px;line-height:1.4;
-  }
+  @media (prefers-reduced-motion: reduce){.mascot-face.bounce{animation:none;}}
+  @keyframes bounce{0%{transform:scale(1) rotate(0);}30%{transform:scale(1.25) rotate(-8deg);}60%{transform:scale(.94) rotate(5deg);}100%{transform:scale(1) rotate(0);}}
+  .bubble{background:var(--surface-2);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:12.5px;font-weight:600;flex:1;min-height:18px;line-height:1.4;}
 
-  .tag{
-    display:inline-flex;align-items:center;gap:6px;
-    align-self:flex-start;
-    font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;margin-bottom:14px;
-  }
+  .tag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;margin-bottom:12px;}
   .tag.salbu{background:var(--salbu-soft);color:var(--salbu);}
   .tag.adren{background:var(--adren-soft);color:var(--adren);}
   .tag.mixed{background:var(--surface-2);color:var(--text-dim);}
+  .tag.clinica{background:var(--salbu-soft);color:var(--salbu);}
+  .tag.examenes{background:var(--exam-soft);color:var(--exam);}
+  .tag.categorizacion{background:var(--gold-soft);color:var(--gold);}
 
-  .qtext{font-size:18px;line-height:1.42;font-weight:600;margin:0 0 20px;font-family:'Space Grotesk';}
+  .qtext{font-size:17px;line-height:1.4;font-weight:600;margin:0 0 14px;font-family:'Space Grotesk';}
 
-  .opts{display:grid;grid-template-columns:1fr;gap:10px;}
+  .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:6px;}
   @media (min-width:480px){.opts{grid-template-columns:1fr 1fr;}}
-  .opt{
-    background:var(--surface-2);
-    border:1.5px solid var(--line);
-    color:var(--text);
-    border-radius:14px;
-    padding:14px 14px;
-    font-size:15px;
-    font-weight:600;
-    text-align:left;
-    cursor:pointer;
-    min-height:52px;
-    transition:transform .1s ease, border-color .15s ease, background .15s ease;
-  }
+  .opt{background:var(--surface-2);border:1.5px solid var(--line);color:var(--text);border-radius:14px;padding:14px 14px;font-size:14.5px;font-weight:600;text-align:left;cursor:pointer;min-height:52px;transition:transform .1s ease, border-color .15s ease, background .15s ease;}
   .opt:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
   .opt:active{transform:scale(.97);}
   .opt.correct{background:var(--adren-soft);border-color:var(--adren);}
@@ -259,67 +183,50 @@
   .opt.dim{opacity:.45;}
   .opt[disabled]{cursor:default;}
 
-  .feedback{margin-top:16px;padding:14px 15px;border-radius:14px;font-size:14.5px;line-height:1.55;display:none;}
+  .feedback{margin-top:16px;padding:14px 15px;border-radius:14px;font-size:14px;line-height:1.55;display:none;}
   .feedback.show{display:block;}
   .feedback.good{background:var(--adren-soft);border:1px solid rgba(61,219,160,.4);}
   .feedback.bad{background:var(--warn-soft);border:1px solid rgba(255,133,119,.4);}
   .feedback .verdict{font-family:'Space Grotesk';font-weight:700;font-size:15px;display:block;margin-bottom:5px;}
 
-  .next-btn{
-    margin-top:14px;width:100%;border:none;border-radius:14px;padding:14px;
-    font-size:15px;font-weight:700;color:#08101f;background:var(--gold);cursor:pointer;display:none;
-  }
+  .next-btn{margin-top:14px;width:100%;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;color:#08101f;background:var(--gold);cursor:pointer;display:none;}
   .next-btn.show{display:block;}
   .next-btn:focus-visible{outline:2px solid #fff;outline-offset:2px;}
 
-  .toast{
-    position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-140%);
-    background:var(--gold);color:#08101f;font-weight:700;font-size:13.5px;
-    padding:9px 16px;border-radius:999px;z-index:20;transition:transform .35s cubic-bezier(.2,1.4,.4,1);
-    box-shadow:0 8px 20px -6px rgba(255,194,102,.5);
-  }
+  .toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-140%);background:var(--gold);color:#08101f;font-weight:700;font-size:13.5px;padding:9px 16px;border-radius:999px;z-index:20;transition:transform .35s cubic-bezier(.2,1.4,.4,1);box-shadow:0 8px 20px -6px rgba(255,194,102,.5);}
   .toast.show{transform:translateX(-50%) translateY(0);}
 
   .confetti-piece{position:fixed;top:-12px;width:8px;height:14px;z-index:30;pointer-events:none;animation:confettiFall linear forwards;}
   @keyframes confettiFall{to{transform:translateY(112vh) rotate(540deg);opacity:.85;}}
 
   /* ---------- summary ---------- */
-  .summary-hero{text-align:center;padding:22px 10px 6px;}
-  .summary-hero .big{font-family:'Space Grotesk';font-size:44px;font-weight:700;margin:6px 0 2px;}
-  .summary-hero .sub{color:var(--text-dim);font-size:14px;}
-  .summary-hero .headline{font-size:15px;font-weight:600;margin-top:8px;}
-  .level-up{
-    margin:14px 0;padding:12px 14px;border-radius:14px;
-    background:linear-gradient(135deg,var(--salbu-soft),var(--adren-soft));
-    border:1px solid var(--line);text-align:center;font-size:14px;font-weight:600;display:none;
-  }
+  .summary-hero{text-align:center;padding:20px 10px 6px;}
+  .summary-hero .big{font-family:'Space Grotesk';font-size:42px;font-weight:700;margin:6px 0 2px;}
+  .summary-hero .sub{color:var(--text-dim);font-size:13.5px;}
+  .summary-hero .headline{font-size:14.5px;font-weight:600;margin-top:8px;}
+  .level-up{margin:14px 0;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,var(--salbu-soft),var(--adren-soft));border:1px solid var(--line);text-align:center;font-size:13.5px;font-weight:600;display:none;}
   .level-up.show{display:block;}
 
-  .bars{display:flex;flex-direction:column;gap:12px;margin:16px 0;}
-  .bar-row{}
-  .bar-row-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600;}
+  .bars{display:flex;flex-direction:column;gap:11px;margin:14px 0;}
+  .bar-row-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;font-weight:600;}
   .bar-track{height:9px;border-radius:99px;background:var(--surface-2);overflow:hidden;}
   .bar-fill{height:100%;border-radius:99px;}
-  .bar-fill.salbu{background:var(--salbu);}
-  .bar-fill.adren{background:var(--adren);}
+  .bar-fill.clinica{background:var(--salbu);}
+  .bar-fill.examenes{background:var(--exam);}
+  .bar-fill.categorizacion{background:var(--gold);}
+  .bar-fill.tratamiento{background:var(--adren);}
 
   .missed{margin-top:18px;}
-  .missed-item{
-    border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-bottom:8px;font-size:13.5px;line-height:1.5;
-  }
-  .missed-item .q{font-weight:700;margin-bottom:4px;font-family:'Space Grotesk';font-size:14px;}
+  .missed-item{border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-bottom:8px;font-size:13px;line-height:1.5;}
+  .missed-item .q{font-weight:700;margin-bottom:4px;font-family:'Space Grotesk';font-size:13.5px;}
   .missed-item .a{color:var(--adren);}
   .missed-none{color:var(--text-dim);font-size:13.5px;text-align:center;padding:10px;}
 
   .summary-actions{display:flex;gap:10px;margin-top:20px;}
-  .summary-actions button{
-    flex:1;border-radius:14px;padding:14px;font-weight:700;font-size:14.5px;cursor:pointer;border:none;
-  }
+  .summary-actions button{flex:1;border-radius:14px;padding:14px;font-weight:700;font-size:14px;cursor:pointer;border:none;}
   .btn-again{background:linear-gradient(135deg,var(--salbu),var(--adren));color:#08101f;}
   .btn-mode{background:var(--surface-2);color:var(--text);border:1px solid var(--line) !important;}
   .summary-actions button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
-
-  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
 </style>
 </head>
 <body>
@@ -330,20 +237,72 @@
 
 <div id="app">
 
-  <!-- START -->
-  <section class="screen active" id="screen-start">
+  <!-- HOME -->
+  <section class="screen active" id="screen-home">
     <div class="brand">
       <div class="brand-icon">🫁💨</div>
       <h1>Nebulízalo</h1>
     </div>
-    <p class="brand-sub">Practica dosis de salbutamol y adrenalina para croup hasta que te salgan solas.</p>
+    <p class="brand-sub">SBO, bronquiolitis y asma del lactante — elegí un tema para practicar.</p>
+
+    <div class="topic-grid" id="topic-grid">
+      <div class="topic-card clinica" data-topic="clinica" tabindex="0" role="button">
+        <span class="ticon">🩺</span>
+        <div class="tname">Clínica</div>
+        <div class="tdesc">Definiciones, fisiopatología, manifestaciones.</div>
+        <div class="tmastery clinica" id="tmastery-clinica">Sin datos</div>
+      </div>
+      <div class="topic-card examenes" data-topic="examenes" tabindex="0" role="button">
+        <span class="ticon">🔬</span>
+        <div class="tname">Exámenes</div>
+        <div class="tdesc">Radiografía, espirometría, causas secundarias.</div>
+        <div class="tmastery examenes" id="tmastery-examenes">Sin datos</div>
+      </div>
+      <div class="topic-card categorizacion" data-topic="categorizacion" tabindex="0" role="button">
+        <span class="ticon">📊</span>
+        <div class="tname">Categorización</div>
+        <div class="tdesc">Score de Tal y score PRAM.</div>
+        <div class="tmastery categorizacion" id="tmastery-categorizacion">Sin datos</div>
+      </div>
+      <div class="topic-card tratamiento" data-topic="tratamiento" tabindex="0" role="button">
+        <span class="ticon">💊</span>
+        <div class="tname">Tratamiento</div>
+        <div class="tdesc">Nebulización, manejo por gravedad, control crónico.</div>
+        <div class="tmastery tratamiento" id="tmastery-tratamiento">Sin datos</div>
+      </div>
+      <div class="topic-card todos" data-topic="todos" tabindex="0" role="button">
+        <span class="ticon">🎓</span>
+        <div class="tname">Repaso general</div>
+        <div class="tdesc" id="tdesc-todos">Todas las preguntas de los 4 temas, mezcladas.</div>
+        <div class="tmastery todos" id="tmastery-todos">Sin datos</div>
+      </div>
+    </div>
+
+    <button class="bank-btn" id="bank-btn">📚 Banco de preguntas — buscar y repasar</button>
+    <div class="progress-teaser" id="progress-teaser" style="margin-top:16px;"></div>
+    <p class="section-label" style="margin-top:14px;">🏅 Insignias</p>
+    <div class="badge-row" id="badge-row"></div>
+  </section>
+
+  <!-- CONFIG -->
+  <section class="screen" id="screen-config">
+    <button class="back-btn" id="config-back">← Volver</button>
+    <div class="brand">
+      <div class="brand-icon" id="config-icon">💊</div>
+      <h1 id="config-title">Tratamiento</h1>
+    </div>
+    <p class="brand-sub" id="config-sub">Elegí qué practicar.</p>
 
     <div class="card">
-      <p class="section-label">Modo</p>
-      <div class="pillrow" id="mode-row">
-        <div class="pill on" data-mode="mixto" tabindex="0" role="button">🔀 Mixto</div>
-        <div class="pill" data-mode="salbu" tabindex="0" role="button">🫁 Salbutamol</div>
-        <div class="pill" data-mode="adren" tabindex="0" role="button">👶 Adrenalina</div>
+      <div id="submode-section">
+        <p class="section-label">Subtema</p>
+        <div class="pillrow" id="submode-row">
+          <div class="pill on" data-sub="mixto" tabindex="0" role="button">🔀 Mixto</div>
+          <div class="pill" data-sub="salbu" tabindex="0" role="button">🫁 Salbutamol</div>
+          <div class="pill" data-sub="adren" tabindex="0" role="button">👶 Adrenalina·Croup</div>
+          <div class="pill" data-sub="manejo" tabindex="0" role="button">📋 Manejo & Fármacos</div>
+          <div class="pill" data-sub="cronico" tabindex="0" role="button">🫧 Control crónico & BA</div>
+        </div>
       </div>
 
       <p class="section-label">Largo de la ronda</p>
@@ -351,25 +310,14 @@
         <div class="pill" data-len="8" tabindex="0" role="button">Rápido · 8</div>
         <div class="pill on" data-len="12" tabindex="0" role="button">Normal · 12</div>
         <div class="pill" data-len="20" tabindex="0" role="button">Maratón · 20</div>
+        <div class="pill" data-len="all" tabindex="0" role="button">Todas</div>
       </div>
 
-      <button class="cheat-toggle" id="cheat-toggle" aria-expanded="false">📋 Ver resumen antes de jugar</button>
-      <div class="cheatsheet" id="cheatsheet">
-        <div class="cheat-card salbu">
-          <b>🫁 Salbutamol (crisis asmática)</b>
-          0,15 mg/kg/dosis (mín 2,5 mg – máx 5 mg) · &lt;20 kg = 2,5 mg · ≥20 kg = 5 mg · completar con SF hasta 3–4 mL · O2 6–8 L/min · 10–15 min.
-        </div>
-        <div class="cheat-card adren">
-          <b>👶 Adrenalina L (croup)</b>
-          1:1000 = 1 mg/mL · 0,5 mL/kg (máx 5 mL) · si el volumen final es &lt;4 mL, completar con SF hasta 4–5 mL · O2 6–8 L/min · 10–15 min · observar 2–3 h · siempre asociar dexametasona.
-        </div>
-      </div>
+      <button class="cheat-toggle" id="cheat-toggle" aria-expanded="false">📋 Ver referencia antes de jugar</button>
+      <div class="cheatsheet" id="cheatsheet"></div>
     </div>
 
     <button class="start-btn" id="start-btn">Empezar ronda →</button>
-    <div class="progress-teaser" id="progress-teaser"></div>
-    <p class="section-label" style="margin-top:14px;">🏅 Insignias</p>
-    <div class="badge-row" id="badge-row"></div>
   </section>
 
   <!-- GAME -->
@@ -384,12 +332,8 @@
         <div class="hud-label">Pregunta</div>
       </div>
       <div class="hud-item">
-        <div class="ring" id="ring-salbu"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="none" stroke="#2b3766" stroke-width="3"/><circle cx="15" cy="15" r="12" fill="none" stroke="#5ab2ff" stroke-width="3" stroke-dasharray="75.4" stroke-dashoffset="75.4" id="ring-salbu-fill" stroke-linecap="round"/></svg><span id="ring-salbu-txt">–</span></div>
-        <div class="hud-label">Salbu</div>
-      </div>
-      <div class="hud-item">
-        <div class="ring" id="ring-adren"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="none" stroke="#2b3766" stroke-width="3"/><circle cx="15" cy="15" r="12" fill="none" stroke="#3ddba0" stroke-width="3" stroke-dasharray="75.4" stroke-dashoffset="75.4" id="ring-adren-fill" stroke-linecap="round"/></svg><span id="ring-adren-txt">–</span></div>
-        <div class="hud-label">Adren</div>
+        <div class="ring" id="ring-round"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="none" stroke="#2b3766" stroke-width="3"/><circle cx="15" cy="15" r="12" fill="none" stroke="#ffc266" stroke-width="3" stroke-dasharray="75.4" stroke-dashoffset="75.4" id="ring-fill" stroke-linecap="round"/></svg><span id="ring-txt">–</span></div>
+        <div class="hud-label">Ronda</div>
       </div>
     </div>
 
@@ -407,6 +351,7 @@
       </div>
       <span class="tag" id="qtag">🫁 Salbutamol</span>
       <p class="qtext" id="qtext">Cargando…</p>
+      <div id="q-table-container"></div>
       <div class="opts" id="opts"></div>
       <div class="feedback" id="feedback">
         <span class="verdict" id="verdict"></span>
@@ -429,26 +374,33 @@
     <div class="level-up" id="badges-unlocked"></div>
 
     <div class="card">
-      <p class="section-label">Dominio por protocolo (histórico)</p>
-      <div class="bars">
-        <div class="bar-row">
-          <div class="bar-row-top"><span>🫁 Salbutamol</span><span class="mono" id="bar-salbu-txt">0%</span></div>
-          <div class="bar-track"><div class="bar-fill salbu" id="bar-salbu" style="width:0%"></div></div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-row-top"><span>👶 Adrenalina</span><span class="mono" id="bar-adren-txt">0%</span></div>
-          <div class="bar-track"><div class="bar-fill adren" id="bar-adren" style="width:0%"></div></div>
-        </div>
-      </div>
-      <p class="section-label" style="margin-top:6px;">Nivel · <span id="level-name" class="mono">Interno</span> · <span id="xp-txt" class="mono">0 XP</span></p>
+      <p class="section-label">Dominio por tema (histórico)</p>
+      <div class="bars" id="summary-bars"></div>
     </div>
 
     <div class="missed" id="missed"></div>
 
     <div class="summary-actions">
-      <button class="btn-mode" id="btn-mode">Cambiar modo</button>
+      <button class="btn-mode" id="btn-mode">Cambiar tema</button>
       <button class="btn-again" id="btn-again">Jugar de nuevo</button>
     </div>
+  </section>
+
+  <!-- BANK -->
+  <section class="screen" id="screen-bank">
+    <button class="back-btn" id="bank-back">← Volver</button>
+    <h1 style="font-size:21px;margin:8px 0 3px;">📚 Banco de preguntas</h1>
+    <p class="brand-sub">Buscá o filtrá para repasar sin modo quiz.</p>
+    <input type="text" id="bank-search" class="bank-search" placeholder="Buscar palabra clave...">
+    <div class="pillrow" id="bank-filter-row">
+      <div class="pill on" data-topic="todos" tabindex="0" role="button">Todos</div>
+      <div class="pill" data-topic="clinica" tabindex="0" role="button">🩺 Clínica</div>
+      <div class="pill" data-topic="examenes" tabindex="0" role="button">🔬 Exámenes</div>
+      <div class="pill" data-topic="categorizacion" tabindex="0" role="button">📊 Categorización</div>
+      <div class="pill" data-topic="tratamiento" tabindex="0" role="button">💊 Tratamiento</div>
+    </div>
+    <div id="bank-count" class="section-label"></div>
+    <div id="bank-list"></div>
   </section>
 
 </div>
@@ -457,118 +409,356 @@
 (function(){
 "use strict";
 
+const TOPIC_META = {
+  clinica:{icon:'🩺', name:'Clínica', desc:'Definiciones, fisiopatología, manifestaciones clínicas del SBO, BA y asma.'},
+  examenes:{icon:'🔬', name:'Exámenes', desc:'Cuándo pedir radiografía, espirometría y estudio de causas secundarias.'},
+  categorizacion:{icon:'📊', name:'Categorización', desc:'Scores de gravedad: Tal para el lactante y PRAM para la crisis asmática.'},
+  tratamiento:{icon:'💊', name:'Tratamiento', desc:'Nebulización, manejo de la crisis por gravedad y control crónico.'},
+  todos:{icon:'🎓', name:'Repaso general', desc:'Todas las preguntas de los 4 temas, mezcladas — ideal para un simulacro final.'},
+};
+
+/* ---------------- reference tables (from el capítulo) ---------------- */
+const TAL_TABLE_HTML =
+  '<div class="q-table-wrap"><table class="q-table"><thead><tr><th>Ptje</th><th>FR &lt;6m</th><th>FR &gt;6m</th><th>Sibilancias</th><th>Cianosis</th><th>Musculatura</th></tr></thead><tbody>'+
+  '<tr><td>0</td><td>&lt;40</td><td>&lt;30</td><td>No</td><td>No</td><td>No</td></tr>'+
+  '<tr><td>1</td><td>41–55</td><td>31–45</td><td>Sólo final espiración</td><td>Peri oral c/llanto</td><td>(+) Subcostal</td></tr>'+
+  '<tr><td>2</td><td>56–70</td><td>46–60</td><td>Esp. e insp. c/estetoscopio</td><td>Peri oral en reposo</td><td>(++) Sub e intercostal</td></tr>'+
+  '<tr><td>3</td><td>&gt;70</td><td>&gt;60</td><td>Esp. e insp. sin estetoscopio o MP ausente</td><td>Generalizada en reposo</td><td>(+++) Supraesternal, sub e intercostal</td></tr>'+
+  '</tbody></table></div><p style="font-size:11px;color:var(--text-dim);margin-top:4px;">Obstrucción: leve 0–5 · moderada 6–8 · grave 9–12</p>';
+
+const PRAM_TABLE_HTML =
+  '<div class="q-table-wrap"><table class="q-table"><thead><tr><th>Signo</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead><tbody>'+
+  '<tr><td>Retracción supraesternal</td><td>Ausencia</td><td>–</td><td>Presente</td><td>–</td></tr>'+
+  '<tr><td>Contr. escaleno</td><td>Ausencia</td><td>–</td><td>Presente</td><td>–</td></tr>'+
+  '<tr><td>Entrada de aire</td><td>Normal</td><td>↓ bases</td><td>↓ global</td><td>Ausente/mínima</td></tr>'+
+  '<tr><td>Sibilancias</td><td>Ausencia</td><td>Espiratorias</td><td>Insp. y esp.</td><td>Sin estetosc., tórax silente</td></tr>'+
+  '<tr><td>Saturación O2</td><td>≥95%</td><td>92–94%</td><td>&lt;92%</td><td>–</td></tr>'+
+  '</tbody></table></div><p style="font-size:11px;color:var(--text-dim);margin-top:4px;">Score leve &lt;5 · moderado ≥5</p>';
+
+const TABLA1_HTML =
+  '<div class="q-table-wrap"><table class="q-table" style="text-align:left;"><thead><tr><th>Frecuentes</th><th>Poco frecuentes</th><th>Raras</th></tr></thead><tbody>'+
+  '<tr><td>Bronquiolitis aguda<br>Asma bronquial</td><td>Fibrosis quística<br>Aspiración pulmonar<br>Disquinesia ciliar<br>Cardiopatías congénitas<br>Cuerpo extraño vía aérea<br>Displasia broncopulmonar</td><td>Anillo vascular<br>Malformaciones pulmonares<br>Bronquiectasias<br>Masas mediastínicas<br>Inmunodeficiencias<br>Bronquiolitis obliterante</td></tr>'+
+  '</tbody></table></div>';
+
+const TABLA3_HTML =
+  '<div class="q-table-wrap"><table class="q-table" style="text-align:left;"><thead><tr><th>Etiología</th><th>Características</th><th>Laboratorio</th></tr></thead><tbody>'+
+  '<tr><td>Displasia broncopulmonar</td><td>Prematurez, distrés RN, VM período RN, O2&gt;28 días</td><td>Radiografía tórax</td></tr>'+
+  '<tr><td>Fibrosis quística</td><td>Desnutrición, malabsorción, neumonía recurrente</td><td>Test del sudor</td></tr>'+
+  '<tr><td>Cardiopatía congénita</td><td>Soplos, insuficiencia cardíaca</td><td>Radiología, ECG, Eco</td></tr>'+
+  '<tr><td>Aspiración cuerpo extraño</td><td>Episodio asfíctico, asimetría auscultatoria</td><td>Radiología, Broncoscopía</td></tr>'+
+  '<tr><td>Reflujo GE</td><td>Vómitos recurrentes</td><td>Radiología, pH metría</td></tr>'+
+  '<tr><td>Trastornos deglución</td><td>Neumonía recurrente, daño neurológico</td><td>Cintigrafía aspiración</td></tr>'+
+  '<tr><td>Malformaciones pulmonares</td><td>Hallazgo radiológico</td><td>Radiología, TAC, Angiografía</td></tr>'+
+  '<tr><td>Malformación vascular</td><td>Estridor persistente</td><td>Esofagograma, Endoscopía, Angiografía</td></tr>'+
+  '<tr><td>Disquinesia ciliar</td><td>Enfermedad sinusal, situs inverso</td><td>Radiología, Biopsia nasal</td></tr>'+
+  '</tbody></table></div>';
+
+const ALGO_TABLE_HTML =
+  '<div class="q-table-wrap"><table class="q-table" style="text-align:left;"><thead><tr><th>Leve</th><th>Moderada</th><th>Grave</th></tr></thead><tbody>'+
+  '<tr><td>Salbutamol IDM 2–8 puff c/10min ×3, según respuesta<br>Prednisona 2 mg/kg vo (máx 40 mg/día) si sin respuesta previa</td>'+
+  '<td>O2 para SatO2≥93%<br>Salbutamol igual que leve<br>+Bromuro ipratropio IDM 2–6 puff o nebulización 0,25–0,5 mg<br>Hidrocortisona 5–7 mg/kg ev</td>'+
+  '<td>O2 máscara no recirculación<br>Fleboclisis/bolo SF<br>Salbutamol nebulización continua<br>+Bromuro ipratropio nebulización<br>Metilprednisolona/Hidrocortisona<br>Sulfato Mg ev 50 mg/kg<br>→ Hospitalización UPC</td></tr>'+
+  '</tbody></table></div>';
+
+const GINA_TABLE_HTML =
+  '<div class="q-table-wrap"><table class="q-table" style="text-align:left;"><thead><tr><th>Paso 1</th><th>Paso 2</th><th>Paso 3</th><th>Paso 4</th><th>Paso 5</th></tr></thead><tbody>'+
+  '<tr><td>B2 acción rápida SN</td><td>CI dosis baja o modif. leucotrieno</td><td>CI dosis baja+LABA o CI dosis media</td><td>CI dosis media/alta+LABA</td><td>+Corticoide oral dosis baja u Omalizumab</td></tr>'+
+  '</tbody></table></div><p style="font-size:11px;color:var(--text-dim);margin-top:4px;">B2 de acción rápida SN se mantiene en todos los pasos. Educación y control ambiental son la base.</p>';
+
 /* ---------------- question bank ---------------- */
-// cat: 'salbu' | 'adren' | 'mixed'  (mixed only appears in modo Mixto)
-// reveal: false hides the protocol tag (used for discrimination questions)
-// boss: true marks an extra-tricky trap question (visual flair + 2x XP)
 const BANK = [
-  // ---- SALBUTAMOL ----
-  {cat:'salbu', reveal:true, q:'Niño de 15 kg con crisis asmática. Según la tabla de peso, ¿qué dosis de salbutamol nebulizado corresponde?',
+  // ================= CLÍNICA =================
+  {topic:'clinica', reveal:true, q:'¿Qué significa la sigla SBO?',
+    opts:['Síndrome Bronquial Obstructivo','Síndrome Broncopulmonar Obstructivo','Signo Bronquial de Obstrucción','Score de Bronquiolitis Obstructiva'], correct:'Síndrome Bronquial Obstructivo',
+    exp:'SBO = Síndrome Bronquial Obstructivo, término amplio usado en Chile para lactantes/preescolares con obstrucción aguda de la vía aérea inferior.'},
+  {topic:'clinica', reveal:true, q:'¿En qué grupo etario se usa habitualmente el término SBO?',
+    opts:['Lactante o preescolar, habitualmente menor de 3 años','Escolares de 6 a 12 años','Recién nacidos únicamente','Adolescentes'], correct:'Lactante o preescolar, habitualmente menor de 3 años',
+    exp:'El SBO describe típicamente a lactantes o preescolares menores de 3 años con síntomas agudos de obstrucción de la vía aérea inferior.'},
+  {topic:'clinica', reveal:true, q:'¿Cuál es el virus más frecuentemente asociado a la bronquiolitis aguda (BA)?',
+    opts:['Virus respiratorio sincicial (VRS)','Adenovirus','Rinovirus','Influenza'], correct:'Virus respiratorio sincicial (VRS)',
+    exp:'El VRS es el principal responsable de la BA, aunque parainfluenza, adenovirus y rinovirus también pueden producirla.'},
+  {topic:'clinica', reveal:true, q:'¿A qué nivel de la vía aérea actúa principalmente el VRS en la bronquiolitis?',
+    opts:['Bronquíolos respiratorios','Tráquea','Bronquios principales','Alvéolos exclusivamente'], correct:'Bronquíolos respiratorios',
+    exp:'La inflamación por VRS ocurre fundamentalmente a nivel de los bronquíolos respiratorios.'},
+  {topic:'clinica', reveal:true, q:'¿Cuál es el mecanismo inflamatorio primario en la bronquiolitis aguda?',
+    opts:['Infiltración de neutrófilos','Infiltración de eosinófilos','Infiltración de linfocitos T únicamente','Fibrosis directa'], correct:'Infiltración de neutrófilos',
+    exp:'En bronquiolitis predomina el neutrófilo; en asma predomina el eosinófilo — es una forma útil de diferenciarlas fisiopatológicamente.'},
+  {topic:'clinica', reveal:true, q:'¿Cuál es la célula inflamatoria predominante en el asma?',
+    opts:['Eosinófilo','Neutrófilo','Basófilo únicamente','Macrófago alveolar'], correct:'Eosinófilo',
+    exp:'El asma es una enfermedad inflamatoria heterogénea donde el eosinófilo es la célula predominante.'},
+  {topic:'clinica', reveal:true, q:'¿Cuál de las siguientes NO es uno de los 3 elementos clave de la fisiopatología del asma?',
+    opts:['Vasodilatación pulmonar','Broncoconstricción por contracción del músculo liso','Engrosamiento de la pared bronquial por inflamación crónica','Aumento del moco'], correct:'Vasodilatación pulmonar',
+    exp:'Los 3 elementos son: broncoconstricción por contracción del músculo liso, engrosamiento de la pared bronquial y aumento del moco. La vasodilatación pulmonar no es uno de ellos.'},
+  {topic:'clinica', reveal:true, q:'En la etapa inicial de obstrucción de la vía aérea, con taquipnea compensatoria, ¿qué trastorno ácido-base es más probable?',
+    opts:['Alcalosis respiratoria leve','Acidosis metabólica','Acidosis respiratoria franca','Alcalosis metabólica'], correct:'Alcalosis respiratoria leve',
+    exp:'La taquipnea compensatoria inicial produce alcalosis respiratoria leve; si progresa sin intervención, puede llegar a acidosis respiratoria y falla sistémica.'},
+  {topic:'clinica', reveal:true, q:'¿Por qué el lactante es especialmente propenso a desarrollar atelectasias durante un SBO?',
+    opts:['Tiene pocas comunicaciones interalveolares (poros de Kohn) y exceso relativo de glándulas mucosas','Tiene más alvéolos funcionales que el adulto','Su diafragma es más fuerte que el del adulto','No presenta musculatura lisa bronquial'], correct:'Tiene pocas comunicaciones interalveolares (poros de Kohn) y exceso relativo de glándulas mucosas',
+    exp:'Las pocas comunicaciones interalveolares y la hipersecreción mucosa favorecen la obstrucción distal y la formación de atelectasias, que actúan como shunt y empeoran la relación V/Q.', boss:true},
+  {topic:'clinica', reveal:true, q:'¿Por qué el diagnóstico de asma es especialmente difícil en el período de lactante?',
+    opts:['Se confunde frecuentemente con obstrucción bronquial secundaria a virus y otras enfermedades más complejas','Porque el asma no existe antes de los 5 años','Porque los lactantes no presentan sibilancias','Porque siempre requiere espirometría para confirmarse'], correct:'Se confunde frecuentemente con obstrucción bronquial secundaria a virus y otras enfermedades más complejas',
+    exp:'En el lactante, el asma se confunde con obstrucción bronquial 2ria a virus y con entidades más complejas (cardiopatías, anillos vasculares, fibrosis quística, trastornos de deglución, etc).'},
+  {topic:'clinica', reveal:true, q:'¿Cuál es la prevalencia aproximada de asma en escolares, según los estudios ISAAC?',
+    opts:['15–18%','1–2%','40–50%','5–8%'], correct:'15–18%',
+    exp:'El asma es una de las enfermedades crónicas más frecuentes en el mundo: 15–18% de los escolares la presentan según ISAAC.'},
+  {topic:'clinica', reveal:true, q:'En el asma del lactante y preescolar, ¿cuál es el desencadenante más frecuente de las crisis (igual que en la bronquiolitis)?',
+    opts:['La infección viral','La exposición a mascotas','El ejercicio físico exclusivamente','El reflujo gastroesofágico'], correct:'La infección viral',
+    exp:'La infección viral es el gatillante más frecuente tanto en BA como en el asma del lactante, aunque también influyen alergenos, tabaco y llanto.'},
+  {topic:'clinica', reveal:true, q:'Durante los períodos intercrisis del asma, ¿qué síntoma menor es característico, sobre todo en las noches y mañanas?',
+    opts:['Tos intermitente','Fiebre persistente','Dolor torácico intenso','Vómitos explosivos'], correct:'Tos intermitente',
+    exp:'La tos intermitente nocturna/matinal —gatillada también por ejercicio, risa o llanto— es típica en los períodos intercrisis del niño asmático.'},
+  {topic:'clinica', reveal:true, q:'¿Qué antecedentes hacen más probable el diagnóstico de asma frente a episodios recurrentes de sibilancias?',
+    opts:['Episodios también con ejercicio o llanto, historia de alergia personal o parientes de primer grado con asma','Episodios exclusivamente con infección viral, sin otros gatillantes','Buen incremento pondoestatural únicamente','Ausencia total de antecedentes familiares'], correct:'Episodios también con ejercicio o llanto, historia de alergia personal o parientes de primer grado con asma',
+    exp:'El diagnóstico de asma es más probable cuando las sibilancias no sólo ocurren con virus, sino también con ejercicio o llanto, o hay alergia personal o antecedente familiar de primer grado.'},
+  {topic:'clinica', reveal:true, q:'Lactante de 2 meses presenta su primer episodio de sibilancias tras un cuadro catarral, sin antecedentes previos. ¿Qué diagnóstico es más consistente con este cuadro?',
+    opts:['Bronquiolitis aguda (BA)','Asma del lactante','Fibrosis quística','Cardiopatía congénita'], correct:'Bronquiolitis aguda (BA)',
+    exp:'La BA se ve típicamente en el primer episodio de un lactante menor de 1 año, casi siempre por VRS. El asma del lactante se define como obstrucción recurrente, por lo que un primer episodio aislado calza mejor con BA — aunque el texto reconoce que distinguirlas de entrada es difícil y muchas veces sólo se aclara con el seguimiento.', boss:true},
+
+  // ================= EXÁMENES =================
+  {topic:'examenes', reveal:true, q:'¿Es necesaria la radiografía de tórax para diagnosticar una bronquiolitis aguda (BA) típica?',
+    opts:['No, el diagnóstico de BA es clínico','Sí, siempre es obligatoria','Sólo si el paciente tiene fiebre','Sí, junto con estudio viral de rutina'], correct:'No, el diagnóstico de BA es clínico',
+    exp:'El diagnóstico de BA es clínico: obstrucción bronquial difusa y crepitaciones tras una IRA en lactante sin SBO recurrente, sin requerir Rx ni estudios virales.'},
+  {topic:'examenes', reveal:true, q:'¿Cuáles son los hallazgos radiológicos más frecuentes en una crisis de asma o BA?',
+    opts:['Hiperinsuflación, imágenes intersticiales perihiliares bilaterales y atelectasias subsegmentarias','Consolidación lobar única','Derrame pleural masivo','Cavitación pulmonar'], correct:'Hiperinsuflación, imágenes intersticiales perihiliares bilaterales y atelectasias subsegmentarias',
+    exp:'Estos son los hallazgos más comunes; la consolidación alveolar, atelectasias lobares o cavitación obligan a buscar causas secundarias.'},
+  {topic:'examenes', reveal:true, q:'La presencia de consolidación alveolar, atelectasias lobares o cavitación en la radiografía obliga a:',
+    opts:['Buscar causas secundarias de SBO','Confirmar bronquiolitis típica','Suspender todo estudio adicional','Iniciar corticoides inhalados de inmediato'], correct:'Buscar causas secundarias de SBO',
+    exp:'Estos hallazgos no son típicos de BA/asma simple y orientan a buscar una causa secundaria (cuerpo extraño, malformación, inmunodeficiencia, etc).'},
+  {topic:'examenes', reveal:true, q:'¿A qué edad se recomienda, en general, realizar espirometría basal y con broncodilatador ante sospecha de asma?',
+    opts:['Sobre los 5 años','Desde el nacimiento','Sólo sobre los 15 años','Nunca en pediatría'], correct:'Sobre los 5 años',
+    exp:'Las Guías MINSAL recomiendan espirometría con BD en todo paciente capaz de realizarla, en general sobre los 5 años.'},
+  {topic:'examenes', reveal:true, q:'¿Qué hallazgo espirométrico apoya el diagnóstico de asma?',
+    opts:['Reversibilidad con broncodilatadores sobre 12%','VEF1 siempre normal','Ausencia total de flujo espiratorio','FEM sin ninguna variabilidad'], correct:'Reversibilidad con broncodilatadores sobre 12%',
+    exp:'Una reversibilidad >12% con broncodilatadores (o VEF1 bajo el percentil 5) apoya el diagnóstico, aunque en cuadros leves la espirometría suele ser normal.'},
+  {topic:'examenes', reveal:true, q:'Si la espirometría sale normal pero persiste la sospecha de asma, ¿qué exámenes de provocación bronquial se pueden realizar?',
+    opts:['Test de metacolina y test de ejercicio','Radiografía de tórax con contraste','Ecocardiografía','pH metría de 24 horas'], correct:'Test de metacolina y test de ejercicio',
+    exp:'Son los más usados en nuestro medio; también existen test de histamina, suero hipertónico o aire frío.'},
+  {topic:'examenes', reveal:true, q:'¿Qué examen confirma el diagnóstico de fibrosis quística como causa de SBO secundario?',
+    opts:['Test del sudor','Broncoscopía','pH metría','Cintigrafía de aspiración'], correct:'Test del sudor',
+    exp:'El test del sudor es el examen de laboratorio característico para fibrosis quística.'},
+  {topic:'examenes', reveal:true, q:'¿Qué examen es característico para confirmar la aspiración de un cuerpo extraño en la vía aérea?',
+    opts:['Broncoscopía','Test del sudor','pH metría','Esofagograma únicamente'], correct:'Broncoscopía',
+    exp:'Ante episodio asfíctico y asimetría auscultatoria, se usa radiología y broncoscopía para confirmar y extraer el cuerpo extraño.'},
+  {topic:'examenes', reveal:true, q:'¿Qué examen se usa característicamente para evaluar el reflujo gastroesofágico como causa de SBO?',
+    opts:['pH metría','Test del sudor','Cintigrafía de aspiración','Angiografía'], correct:'pH metría',
+    exp:'Junto con la radiología, la pH metría es el examen de laboratorio propio del reflujo gastroesofágico.'},
+  {topic:'examenes', reveal:true, q:'¿Qué hallazgo radiológico sugiere aspiración de cuerpo extraño en la vía aérea?',
+    opts:['Atelectasias e hiperinsuflación asimétrica','Cardiomegalia con hiperflujo','Situs inversus','Bronquiectasias difusas bilaterales'], correct:'Atelectasias e hiperinsuflación asimétrica',
+    exp:'La asimetría radiológica (hiperinsuflación o atelectasia unilateral) es característica de cuerpo extraño.'},
+  {topic:'examenes', reveal:true, q:'¿Qué mide el FENO y cuál es su estado actual como herramienta diagnóstica de asma según el texto?',
+    opts:['Óxido nítrico exhalado; aún en discusión para diagnóstico','Flujo espiratorio nasal; ya validado como estándar','Frecuencia respiratoria; obsoleto','Fracción de eosinófilos nasales; sin uso clínico'], correct:'Óxido nítrico exhalado; aún en discusión para diagnóstico',
+    exp:'El FENO (óxido nítrico exhalado) se puede medir para evaluar atopía, pero el texto señala que aún está en discusión como herramienta diagnóstica de asma.'},
+  {topic:'examenes', reveal:true, q:'¿Cuál de las siguientes es una señal de alarma que sugiere un SBO secundario y amerita estudio de causas secundarias?',
+    opts:['Soplo cardíaco o visceromegalia','Buen incremento pondoestatural','Un único episodio leve resuelto con salbutamol','Antecedente familiar de rinitis alérgica únicamente'], correct:'Soplo cardíaco o visceromegalia',
+    exp:'Desnutrición, malabsorción, diarrea crónica, sinusitis o infecciones recurrentes, irritabilidad alimentaria, estridor, sibilancias persistentes, soplo cardíaco o visceromegalia son señales de SBO secundario.'},
+  {topic:'examenes', reveal:true, q:'Preescolar de 3 años con episodios recurrentes de sibilancias gatillados por virus, buen incremento pondoestatural, sin desnutrición, sin infecciones recurrentes ni estridor, con madre asmática. ¿Amerita un estudio exhaustivo para descartar causas secundarias de SBO?',
+    opts:['No necesariamente — el cuadro es consistente con asma del lactante/preescolar','Sí, siempre que el SBO sea recurrente','Sí, todo SBO requiere fibrobroncoscopía de entrada','Sí, únicamente por la edad del paciente'], correct:'No necesariamente — el cuadro es consistente con asma del lactante/preescolar',
+    exp:'No presenta ninguna señal de alarma del texto (desnutrición, infecciones recurrentes, estridor, soplo, etc.) y sí tiene un factor que aumenta la probabilidad de asma (antecedente familiar de primer grado). El estudio exhaustivo se reserva para cuando hay señales de alarma o mala evolución.', boss:true},
+
+  // ================= CATEGORIZACIÓN =================
+  {topic:'categorizacion', reveal:true, q:'¿Qué escala se usa para evaluar la gravedad clínica del SBO en el lactante, con baja variabilidad interobservador?',
+    opts:['Puntaje clínico de Bierman y Pearson modificado por Tal','Score PRAM','Escala de Glasgow','Score de Silverman-Andersen'], correct:'Puntaje clínico de Bierman y Pearson modificado por Tal',
+    exp:'El puntaje de Tal se usa en atención primaria para el lactante y tiene muy baja variabilidad interobservador.'},
+  {topic:'categorizacion', reveal:true, q:'Según el puntaje de Tal, ¿qué rango de puntaje corresponde a obstrucción GRAVE?',
+    opts:['9 a 12','0 a 5','6 a 8','13 a 16'], correct:'9 a 12',
+    exp:'Obstrucción: leve 0–5, moderada 6–8, grave 9–12.'},
+  {topic:'categorizacion', reveal:true, table:TAL_TABLE_HTML,
+    q:'Usando la Tabla de Tal: lactante de 4 meses, FR 65/min, sibilancias espiratorias e inspiratorias audibles con estetoscopio, cianosis peri oral con el llanto, retracción subcostal. ¿Cuál es su puntaje total y clasificación?',
+    opts:['6 – Moderada','4 – Leve','9 – Grave','8 – Moderada'], correct:'6 – Moderada', boss:true,
+    exp:'FR 65 en <6m (56–70)=2 · sibilancias con estetoscopio=2 · cianosis peri oral con llanto=1 · musculatura subcostal (+)=1. Total 2+2+1+1=6 → Moderada (6–8).'},
+  {topic:'categorizacion', reveal:true, table:TAL_TABLE_HTML,
+    q:'Usando la Tabla de Tal: lactante de 8 meses, FR 50/min, sibilancias sólo al final de la espiración, sin cianosis, uso de musculatura sub e intercostal (++). ¿Cuál es su puntaje total y clasificación?',
+    opts:['5 – Leve','7 – Moderada','3 – Leve','6 – Moderada'], correct:'5 – Leve', boss:true,
+    exp:'FR 50 en >6m (46–60)=2 · sibilancias sólo final espiración=1 · cianosis "No"=0 · musculatura (++) sub e intercostal=2. Total 2+1+0+2=5 → Leve (0–5, justo en el límite superior).'},
+  {topic:'categorizacion', reveal:true, q:'¿Qué escala se usa para evaluar la gravedad aguda de una crisis de asma, considerando retracción supraesternal, contracción del escaleno, entrada de aire, sibilancias y saturación de O2?',
+    opts:['Score PRAM','Puntaje de Tal','Escala de Ramsay','Score de Wood-Downes'], correct:'Score PRAM',
+    exp:'El score PRAM (Pediatric Respiratory Assessment Measure) evalúa esos 5 signos para clasificar la gravedad de la crisis asmática.'},
+  {topic:'categorizacion', reveal:true, q:'Según el score PRAM, ¿qué puntaje total define un score LEVE?',
+    opts:['Menor a 5','Menor a 3','Mayor o igual a 8','Cualquier puntaje sobre 0'], correct:'Menor a 5',
+    exp:'Score leve: <5. Score moderado: ≥5.'},
+  {topic:'categorizacion', reveal:true, table:PRAM_TABLE_HTML,
+    q:'Usando la Tabla PRAM: escolar con retracción supraesternal presente, sin contracción del escaleno, entrada de aire con disminución en las bases, sibilancias inspiratorias y espiratorias, SatO2 93%. ¿Cuál es su puntaje total y clasificación?',
+    opts:['6 – Moderado','3 – Leve','8 – Moderado','4 – Leve'], correct:'6 – Moderado', boss:true,
+    exp:'Supraesternal presente=2 · escaleno ausencia=0 · entrada de aire ↓bases=1 · sibilancias insp.+esp.=2 · SatO2 93% (92–94%)=1. Total 2+0+1+2+1=6 → Moderado (≥5).'},
+  {topic:'categorizacion', reveal:true, q:'¿Qué parámetro se debe medir junto al puntaje de Tal para completar la evaluación de gravedad del lactante?',
+    opts:['Saturación arterial de oxígeno','Presión arterial media','Glicemia capilar','Temperatura rectal'], correct:'Saturación arterial de oxígeno',
+    exp:'El puntaje de Tal se debe complementar siempre con la medición de saturación arterial de oxígeno.'},
+  {topic:'categorizacion', reveal:true, q:'¿Cada cuánto tiempo se recomienda controlar periódicamente a un paciente asmático para monitorear la efectividad de la terapia?',
+    opts:['Cada 2–3 meses','Cada 24 horas','Una vez al año únicamente','Sólo si hay una crisis'], correct:'Cada 2–3 meses',
+    exp:'El control periódico cada 2–3 meses permite evaluar control de síntomas, adherencia y necesidad de ajustar terapia.'},
+  {topic:'categorizacion', reveal:true, q:'Según la frecuencia de síntomas en las últimas 4 semanas, ¿cómo se clasifica el control del asma?',
+    opts:['Controlado / parcialmente controlado (1–2 veces/semana) / no controlado (3–4 veces/semana)','Sólo "crisis" o "sin crisis"','Leve, moderado o grave según la edad','No existe clasificación de control en asma'], correct:'Controlado / parcialmente controlado (1–2 veces/semana) / no controlado (3–4 veces/semana)',
+    exp:'Preguntando por síntomas diurnos, uso de salbutamol, despertares nocturnos y limitación de actividad en las últimas 4 semanas se clasifica el control del asma.'},
+
+  // ================= TRATAMIENTO :: SALBUTAMOL (nebulización) =================
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'Niño de 15 kg con crisis asmática. Según la tabla de peso, ¿qué dosis de salbutamol nebulizado corresponde?',
     opts:['2,5 mg','5 mg','1,25 mg','7,5 mg'], correct:'2,5 mg',
     exp:'Con menos de 20 kg la dosis fija de la tabla es 2,5 mg. Sobre 20 kg pasa a 5 mg.'},
-  {cat:'salbu', reveal:true, q:'Adolescente de 42 kg con sibilancias. ¿Dosis de salbutamol según tabla de peso?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'Adolescente de 42 kg con sibilancias. ¿Dosis de salbutamol según tabla de peso?',
     opts:['5 mg','2,5 mg','7,5 mg','10 mg'], correct:'5 mg',
     exp:'≥20 kg = 5 mg. Esa es también la dosis máxima por nebulización, independiente de cuánto pese más.'},
-  {cat:'salbu', reveal:true, q:'Lactante de 8 kg con broncoespasmo. ¿Qué dosis de salbutamol le corresponde?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'Lactante de 8 kg con broncoespasmo. ¿Qué dosis de salbutamol le corresponde?',
     opts:['2,5 mg','1,2 mg','5 mg','0,15 mg'], correct:'2,5 mg', boss:true,
     exp:'0,15 mg/kg × 8 kg = 1,2 mg, pero es menor que la dosis mínima permitida (2,5 mg), así que se administra el mínimo: 2,5 mg.'},
-  {cat:'salbu', reveal:true, q:'¿Cuál es la dosis de salbutamol nebulizado expresada por kilo?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'¿Cuál es la dosis de salbutamol nebulizado expresada por kilo?',
     opts:['0,15 mg/kg/dosis','0,5 mg/kg/dosis','1 mg/kg/dosis','0,05 mg/kg/dosis'], correct:'0,15 mg/kg/dosis',
     exp:'0,15 mg/kg/dosis, con un rango clínico de 2,5 a 5 mg por nebulización.'},
-  {cat:'salbu', reveal:true, q:'¿Cuáles son la dosis mínima y máxima de salbutamol por nebulización?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'¿Cuáles son la dosis mínima y máxima de salbutamol por nebulización?',
     opts:['2,5 mg – 5 mg','1 mg – 3 mg','5 mg – 10 mg','2 mg – 4 mg'], correct:'2,5 mg – 5 mg',
     exp:'El rango va de 2,5 mg (mínimo) a 5 mg (máximo), sin importar cuánto más pese el niño.'},
-  {cat:'salbu', reveal:true, q:'¿En qué concentración viene la ampolla de salbutamol para nebulizar?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'¿En qué concentración viene la ampolla de salbutamol para nebulizar?',
     opts:['5 mg/mL','1 mg/mL','2,5 mg/mL','10 mg/mL'], correct:'5 mg/mL',
     exp:'La ampolla estándar trae 5 mg/mL — con eso se calculan los mL a extraer.'},
-  {cat:'salbu', reveal:true, q:'Para preparar una dosis de 2,5 mg de salbutamol (ampolla 5 mg/mL), ¿cuántos mL extraes?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'Para preparar una dosis de 2,5 mg de salbutamol (ampolla 5 mg/mL), ¿cuántos mL extraes?',
     opts:['0,5 mL','1 mL','2,5 mL','0,25 mL'], correct:'0,5 mL',
     exp:'2,5 mg ÷ 5 mg/mL = 0,5 mL de la ampolla, y luego se completa con SF hasta 3–4 mL.'},
-  {cat:'salbu', reveal:true, q:'Para preparar una dosis de 5 mg de salbutamol (ampolla 5 mg/mL), ¿cuántos mL extraes?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'Para preparar una dosis de 5 mg de salbutamol (ampolla 5 mg/mL), ¿cuántos mL extraes?',
     opts:['1 mL','0,5 mL','2 mL','5 mL'], correct:'1 mL',
     exp:'5 mg ÷ 5 mg/mL = 1 mL de la ampolla, completando después con SF hasta 3–4 mL.'},
-  {cat:'salbu', reveal:true, q:'¿Hasta qué volumen final se completa la nebulización de salbutamol con suero fisiológico?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'¿Hasta qué volumen final se completa la nebulización de salbutamol con suero fisiológico?',
     opts:['3–4 mL','1–2 mL','5–6 mL','8–10 mL'], correct:'3–4 mL',
     exp:'Se completa siempre con SF hasta 3–4 mL de volumen final, sea cual sea la dosis.'},
-  {cat:'salbu', reveal:true, q:'¿Se puede repetir la nebulización con salbutamol?',
+  {topic:'tratamiento', cat:'salbu', reveal:true, q:'¿Se puede repetir la nebulización con salbutamol?',
     opts:['Sí, según respuesta clínica','No, es dosis única','Sólo cada 12 horas','Sólo si hay fiebre'], correct:'Sí, según respuesta clínica',
     exp:'Se puede repetir guiándose por la respuesta clínica del paciente, no por un horario fijo.'},
 
-  // ---- ADRENALINA / CROUP ----
-  {cat:'adren', reveal:true, q:'¿Cuál es la concentración de la Adrenalina L usada para croup?',
+  // ================= TRATAMIENTO :: ADRENALINA / CROUP (nebulización) =================
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Cuál es la concentración de la Adrenalina L usada para croup?',
     opts:['1 mg/mL (1:1000)','0,1 mg/mL (1:10.000)','5 mg/mL','1 mg/5 mL'], correct:'1 mg/mL (1:1000)',
     exp:'Adrenalina L 1:1000 equivale a 1 mg por cada mL — dato clave, porque hace que mg/kg y mL/kg coincidan numéricamente.'},
-  {cat:'adren', reveal:true, q:'Niño de 6 kg con croup. ¿Dosis de adrenalina nebulizada?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'Niño de 6 kg con croup. ¿Dosis de adrenalina nebulizada?',
     opts:['3 mL','6 mL','1,5 mL','5 mL'], correct:'3 mL',
     exp:'0,5 mL/kg × 6 kg = 3 mL. No alcanza el tope de 5 mL, así que se da completo.'},
-  {cat:'adren', reveal:true, q:'Niño de 10 kg con croup. ¿Dosis de adrenalina nebulizada?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'Niño de 10 kg con croup. ¿Dosis de adrenalina nebulizada?',
     opts:['5 mL','10 mL','2,5 mL','7 mL'], correct:'5 mL',
     exp:'0,5 mL/kg × 10 kg = 5 mL, justo en el tope máximo permitido.'},
-  {cat:'adren', reveal:true, q:'Niño de 14 kg con estridor por laringitis obstructiva. ¿Dosis de adrenalina nebulizada?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'Niño de 14 kg con estridor por laringitis obstructiva. ¿Dosis de adrenalina nebulizada?',
     opts:['5 mL','7 mL','6 mL','4 mL'], correct:'5 mL', boss:true,
     exp:'0,5 mL/kg × 14 kg = 7 mL, pero el máximo absoluto es 5 mL — se administran 5 mL, no más.'},
-  {cat:'adren', reveal:true, q:'¿Cuál es la dosis máxima de adrenalina nebulizada para croup?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Cuál es la dosis máxima de adrenalina nebulizada para croup?',
     opts:['5 mL','3 mL','8 mL','10 mL'], correct:'5 mL',
     exp:'El techo es 5 mL por nebulización, equivalente a 5 mg de adrenalina, sin importar cuánto más pese el niño.'},
-  {cat:'adren', reveal:true, q:'Niño de 4 kg con croup: la dosis calculada de adrenalina da 2 mL. ¿Qué corresponde hacer antes de nebulizar?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'Niño de 4 kg con croup: la dosis calculada de adrenalina da 2 mL. ¿Qué corresponde hacer antes de nebulizar?',
     opts:['Completar con SF hasta 4–5 mL','Duplicar la dosis de adrenalina','No nebulizar, es muy poco volumen','Usar adrenalina no diluida al doble'], correct:'Completar con SF hasta 4–5 mL', boss:true,
-    exp:'La dosis de fármaco no cambia (siguen siendo 2 mL = 2 mg de adrenalina): sólo se agrega SF para que el volumen total a nebulizar sea suficiente (4–5 mL) y el equipo nebulice bien.'},
-  {cat:'adren', reveal:true, q:'Si el volumen calculado de adrenalina queda cercano a 4–5 mL, ¿hace falta diluir?',
+    exp:'La dosis de fármaco no cambia (siguen siendo 2 mL = 2 mg de adrenalina): sólo se agrega SF para que el volumen total a nebulizar sea suficiente (4–5 mL).'},
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'Si el volumen calculado de adrenalina queda cercano a 4–5 mL, ¿hace falta diluir?',
     opts:['No, se administra directo','Sí, siempre se diluye al doble','Sí, se diluye a la mitad','Sólo en menores de 1 año'], correct:'No, se administra directo',
     exp:'Si el volumen ya está cerca de 4–5 mL no requiere dilución adicional — se nebuliza tal cual.'},
-  {cat:'adren', reveal:true, q:'¿Cuánto tiempo se debe observar al paciente después de nebulizar con adrenalina por croup?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Cuánto tiempo se debe observar al paciente después de nebulizar con adrenalina por croup?',
     opts:['2–3 horas','30 minutos','24 horas','No requiere observación'], correct:'2–3 horas',
     exp:'Mínimo 2–3 horas de observación posterior, por el riesgo de efecto rebote.'},
-  {cat:'adren', reveal:true, q:'¿Por qué se observa al paciente 2–3 horas tras nebulizar con adrenalina?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Por qué se observa al paciente 2–3 horas tras nebulizar con adrenalina?',
     opts:['Por riesgo de efecto rebote / reaparición del estridor','Por riesgo de alergia tardía','Para repetir la dosis automáticamente','Por protocolo administrativo, sin razón clínica'], correct:'Por riesgo de efecto rebote / reaparición del estridor',
-    exp:'El efecto de la adrenalina dura 1,5–2 horas; al pasar, el estridor puede reaparecer, por eso se mantiene en observación.'},
-  {cat:'adren', reveal:true, q:'¿Cuánto dura el efecto de la adrenalina nebulizada?',
+    exp:'El efecto de la adrenalina dura 1,5–2 horas; al pasar, el estridor puede reaparecer.'},
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Cuánto dura el efecto de la adrenalina nebulizada?',
     opts:['1,5–2 horas','15–20 minutos','6–8 horas','Todo el día'], correct:'1,5–2 horas',
     exp:'El efecto dura 1,5–2 horas, y luego puede reaparecer el estridor (efecto rebote).'},
-  {cat:'adren', reveal:true, q:'¿Qué medicamento se debe asociar siempre a la adrenalina nebulizada en croup?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Qué medicamento se debe asociar siempre a la adrenalina nebulizada en croup?',
     opts:['Dexametasona','Amoxicilina','Salbutamol','Paracetamol'], correct:'Dexametasona',
     exp:'La dexametasona se asocia siempre, independiente de la severidad — lo que cambia es la dosis.'},
-  {cat:'adren', reveal:true, q:'Croup leve: ¿dosis de dexametasona?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'Croup leve: ¿dosis de dexametasona?',
     opts:['0,15–0,3 mg/kg','0,6 mg/kg','1 mg/kg','16 mg fijos'], correct:'0,15–0,3 mg/kg',
     exp:'Leve: 0,15–0,3 mg/kg. Moderado: 0,3 mg/kg. Grave: 0,6 mg/kg.'},
-  {cat:'adren', reveal:true, q:'Croup grave: ¿dosis de dexametasona?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'Croup grave: ¿dosis de dexametasona?',
     opts:['0,6 mg/kg','0,15 mg/kg','0,3 mg/kg','1,2 mg/kg'], correct:'0,6 mg/kg',
     exp:'En croup grave la dosis sube a 0,6 mg/kg, con techo de 16 mg.'},
-  {cat:'adren', reveal:true, q:'¿Cuál es la dosis máxima de dexametasona en croup?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Cuál es la dosis máxima de dexametasona en croup?',
     opts:['16 mg','8 mg','20 mg','No tiene techo'], correct:'16 mg',
     exp:'El máximo absoluto es 16 mg, aunque el cálculo por kg dé más.'},
-  {cat:'adren', reveal:true, q:'¿En qué posición se nebuliza a un niño con croup, idealmente?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿En qué posición se nebuliza a un niño con croup, idealmente?',
     opts:['Sentado o semisentado, en brazos de los padres si es posible','Acostado boca abajo','Trendelenburg','De pie y quieto'], correct:'Sentado o semisentado, en brazos de los padres si es posible',
     exp:'Sentado o semisentado, y en brazos de los padres si se puede — ayuda a mantener al niño tranquilo.'},
-  {cat:'adren', reveal:true, q:'¿Por qué se recomienda manipular lo mínimo posible a un niño con croup y evitar procedimientos innecesarios?',
+  {topic:'tratamiento', cat:'adren', reveal:true, q:'¿Por qué se recomienda manipular lo mínimo posible a un niño con croup y evitar procedimientos innecesarios?',
     opts:['Porque el llanto aumenta la obstrucción de la vía aérea','Porque duele mucho','Por protocolo de aislamiento','Para ahorrar insumos'], correct:'Porque el llanto aumenta la obstrucción de la vía aérea',
     exp:'El llanto empeora la obstrucción de la vía aérea alta, así que agitar al niño puede empeorar el cuadro.'},
 
-  // ---- COMPARTIDAS (ambos protocolos) ----
-  {cat:'mixed', reveal:true, q:'¿Cuál es el flujo de O2 recomendado para nebulizar, tanto con salbutamol como con adrenalina?',
+  // ================= TRATAMIENTO :: MANEJO & FÁRMACOS (nuevo, según capítulo) =================
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'Según el flujograma de manejo, en una crisis asmática LEVE sin respuesta a broncodilatadores previos, ¿qué dosis de prednisona oral corresponde?',
+    opts:['2 mg/kg vo (máx 40 mg/día)','10 mg/kg vo','0,1 mg/kg dosis única','5 mg/kg ev'], correct:'2 mg/kg vo (máx 40 mg/día)',
+    exp:'Según el flujograma, en crisis leve sin respuesta a broncodilatadores se usa prednisona 2 mg/kg vo, con techo de 40 mg/día.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'¿Cuál es la dosis habitual de prednisona oral para una crisis de asma, según el texto?',
+    opts:['1–2 mg/kg/día por 3–5 días','5 mg/kg/día por 10 días','0,1 mg/kg dosis única','10 mg/kg/día ev'], correct:'1–2 mg/kg/día por 3–5 días',
+    exp:'Los corticoides sistémicos más usados son prednisona 1–2 mg/kg/día por 3–5 días, o hidrocortisona 5 mg/kg/día ev si no tolera vía oral.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'Según el flujograma, ¿qué dosis de hidrocortisona ev se usa en una crisis MODERADA de asma?',
+    opts:['5–7 mg/kg ev','1 mg/kg ev','20 mg/kg ev','0,5 mg/kg ev'], correct:'5–7 mg/kg ev',
+    exp:'En crisis moderada, junto con O2 y salbutamol + bromuro de ipratropio, se agrega hidrocortisona 5–7 mg/kg ev.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'En crisis moderada a grave de asma, ¿qué fármaco tiene efecto aditivo a los betaagonistas?',
+    opts:['Bromuro de ipratropio','Amoxicilina','Loratadina','Furosemida'], correct:'Bromuro de ipratropio',
+    exp:'El bromuro de ipratropio (anticolinérgico) se asocia a salbutamol en crisis moderada a grave por su efecto aditivo.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'¿Cuál es la dosis de sulfato de magnesio para una crisis de asma que no responde a la terapia convencional?',
+    opts:['50 mg/kg ev','5 mg/kg ev','500 mg/kg ev','1 mg/kg vo'], correct:'50 mg/kg ev',
+    exp:'El sulfato de magnesio (50 mg/kg ev) es válido en crisis refractaria a terapia convencional, por sus efectos antiinflamatorio y broncodilatador.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'Una crisis asmática GRAVE con SatO2 <93% y tórax silente debe manejarse en:',
+    opts:['Hospitalización en UPC','Alta con plan escrito','Observación 2 horas y alta','Sólo salbutamol IDM ambulatorio'], correct:'Hospitalización en UPC',
+    exp:'La crisis grave requiere O2 con máscara no recirculante, fleboclisis, salbutamol en nebulización continua, bromuro de ipratropio, corticoide ev y sulfato de Mg — con hospitalización en UPC.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'Después de administrar un puff de salbutamol con aerocámara (técnica de IDM), ¿qué se debe hacer antes del siguiente puff?',
+    opts:['Permitir que el niño respire tranquilo 3 veces y esperar menos de 1 minuto','Esperar 10 minutos exactos sin excepción','Repetir el puff de inmediato sin pausa','Retirar la aerocámara y usar sólo el inhalador directo'], correct:'Permitir que el niño respire tranquilo 3 veces y esperar menos de 1 minuto',
+    exp:'Técnica de aerosolterapia: administrar un puff, dejar respirar tranquilo 3 veces, esperar menos de 1 minuto y repetir hasta completar la dosis indicada.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'¿La administración de salbutamol en IDM con aerocámara es más lenta o más rápida que la nebulización, y qué tan efectiva es?',
+    opts:['Más rápida e igual de efectiva','Más lenta pero más efectiva','Más lenta y menos efectiva','Misma velocidad, menos efectiva'], correct:'Más rápida e igual de efectiva',
+    exp:'El texto es explícito: la administración de salbutamol en IDM es más rápida e igual de efectiva que la nebulización.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'¿En qué situaciones se prefiere la nebulización de salbutamol sobre el IDM con aerocámara?',
+    opts:['FiO2 >30% requerido o paciente combativo con el IDM','Siempre, en todos los pacientes','Sólo en mayores de 10 años','Nunca, el IDM siempre es preferible'], correct:'FiO2 >30% requerido o paciente combativo con el IDM',
+    exp:'Sólo se prefiere nebulización si el paciente requiere FiO2 >30% o se torna combativo con el IDM.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'Lactante con crisis de asma LEVE, sin uso previo de broncodilatadores. ¿Está indicado iniciar corticoides sistémicos de entrada?',
+    opts:['No es necesario — es la única excepción a la indicación precoz de corticoides','Sí, siempre son obligatorios desde el inicio','Sólo si hay fiebre asociada','Sólo en mayores de 5 años'], correct:'No es necesario — es la única excepción a la indicación precoz de corticoides',
+    exp:'Los corticoides sistémicos deben darse en forma precoz en toda crisis, con una única excepción explícita: una crisis leve que no ha recibido broncodilatadores previos.', boss:true},
+
+  // ================= TRATAMIENTO :: CONTROL CRÓNICO & BRONQUIOLITIS =================
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'En el tratamiento de la bronquiolitis aguda (BA), ¿qué evidencia existe para el uso de broncodilatadores, kinesioterapia, corticoides y adrenalina racémica?',
+    opts:['No hay evidencia que soporte su utilidad clínica','Son de primera línea siempre','Sólo la kinesioterapia tiene evidencia sólida','Se recomiendan combinados de rutina'], correct:'No hay evidencia que soporte su utilidad clínica',
+    exp:'Estudios de buena calidad metodológica descartan la utilidad clínica de estas terapias en el curso agudo de BA.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Cuál es el pilar fundamental del tratamiento de la bronquiolitis aguda (BA)?',
+    opts:['Hidratación y oxigenoterapia (tratamiento de sostén)','Corticoides sistémicos en dosis altas','Antibióticos de amplio espectro','Broncodilatadores nebulizados continuos'], correct:'Hidratación y oxigenoterapia (tratamiento de sostén)',
+    exp:'El tratamiento de BA es fundamentalmente de sostén: buena hidratación y oxigenoterapia; en mayor compromiso, apoyo con cánula de alto flujo, VNI o ventilación mecánica.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Qué terapia mostró inicialmente reducir los días de hospitalización en BA, pero luego no demostró efecto al revisarse con mejor metodología?',
+    opts:['Suero hipertónico al 3%','Adrenalina racémica','Corticoides inhalados','Kinesioterapia respiratoria intensiva'], correct:'Suero hipertónico al 3%',
+    exp:'El suero hipertónico al 3% pareció reducir en 1,3 días la hospitalización inicialmente, pero estudios recientes con mejor metodología no encontraron efecto.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Cuál es el controlador preventivo a largo plazo más utilizado en el asma crónica, con robusta evidencia de efecto?',
+    opts:['Corticoide inhalado (CI)','Antibiótico profiláctico','Broncodilatador oral','Adrenalina racémica'], correct:'Corticoide inhalado (CI)',
+    exp:'El CI mejora síntomas y función pulmonar, y disminuye exacerbaciones y hospitalizaciones — es el controlador de síntomas crónicos por excelencia.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Cuál es la dosis habitual de budesonida inhalada (dosis baja-media) en niños con asma?',
+    opts:['200–400 ug/día','20–40 ug/día','2000–4000 ug/día','800–1600 ug/día'], correct:'200–400 ug/día',
+    exp:'Budesonida 200–400 ug/día, o Fluticasona 100–200 ug/día, son las dosis habituales bajas-medias de CI.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Cuál es la dosis habitual de montelukast (antileucotrieno) en niños con asma?',
+    opts:['4–5 mg/día','50 mg/día','0,5 mg/día','20 mg/día'], correct:'4–5 mg/día',
+    exp:'El montelukast se usa en dosis de 4–5 mg/día como alternativa o complemento al CI.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Qué efecto adverso se ha comprobado con el uso de corticoides inhalados (CI) durante el primer año de tratamiento?',
+    opts:['Efecto en la talla (~1 cm en el primer y segundo año), no progresivo','Cataratas en todos los pacientes','Diabetes insulinodependiente','Osteoporosis severa irreversible'], correct:'Efecto en la talla (~1 cm en el primer y segundo año), no progresivo',
+    exp:'Se ha comprobado un efecto en la talla en el primer año de uso (~1 cm en el primer y segundo año), que no es progresivo pero puede tener un efecto menor en la talla final.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Cada cuánto tiempo se recomienda lavar la ropa de cama como medida de control ambiental para el asma por ácaros?',
+    opts:['Cada 6 semanas','Cada 6 meses','Una vez al año','Cada 6 días'], correct:'Cada 6 semanas',
+    exp:'Entre las medidas de control ambiental: lavar la ropa de cama cada 6 semanas, cubrir colchones y almohadas anti-ácaros, evitar peluches/alfombras, ventilar la casa, etc.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'¿Qué vacunación se recomienda siempre en el paciente asmático, por mayor riesgo de evolución grave?',
+    opts:['Vacuna contra influenza','Vacuna contra varicela únicamente','Vacuna contra rotavirus','Ninguna vacuna adicional'], correct:'Vacuna contra influenza',
+    exp:'La vacunación contra influenza debe indicarse siempre al paciente asmático, ya que tiene mayor riesgo de evolución grave.'},
+  {topic:'tratamiento', cat:'cronico', reveal:true, q:'Niño con asma en tratamiento con CI en dosis baja que logra buen control de síntomas durante 1 año. ¿Qué se recomienda hacer con la terapia?',
+    opts:['Se puede suspender la terapia luego de 1 año de buen control','Debe mantenerse de por vida sin excepción','Debe duplicarse la dosis como consolidación','Debe cambiarse a corticoide oral'], correct:'Se puede suspender la terapia luego de 1 año de buen control',
+    exp:'En el caso de uso de CI en dosis baja, el texto indica que la terapia se suspende luego de 1 año de buen control.', boss:true},
+
+  // ================= TRATAMIENTO :: COMPARTIDAS / DISCRIMINACIÓN (nebulización) =================
+  {topic:'tratamiento', cat:'mixed', reveal:true, q:'¿Cuál es el flujo de O2 recomendado para nebulizar, tanto con salbutamol como con adrenalina?',
     opts:['6–8 L/min','2–4 L/min','10–12 L/min','15 L/min'], correct:'6–8 L/min',
     exp:'Ambos protocolos usan el mismo flujo: 6–8 L/min de O2.'},
-  {cat:'mixed', reveal:true, q:'¿Cuánto dura una nebulización, tanto de salbutamol como de adrenalina?',
+  {topic:'tratamiento', cat:'mixed', reveal:true, q:'¿Cuánto dura una nebulización, tanto de salbutamol como de adrenalina?',
     opts:['10–15 minutos','2–3 minutos','30–40 minutos','1 hora'], correct:'10–15 minutos',
     exp:'Ambas nebulizaciones duran entre 10 y 15 minutos.'},
-  {cat:'mixed', reveal:true, q:'¿En qué posición conviene nebulizar a un niño, en general?',
+  {topic:'tratamiento', cat:'mixed', reveal:true, q:'¿En qué posición conviene nebulizar a un niño, en general?',
     opts:['Sentado o semisentado','Acostado boca abajo','De pie','No importa la posición'], correct:'Sentado o semisentado',
     exp:'Sentado o semisentado favorece la mecánica respiratoria en ambos escenarios.'},
-  {cat:'mixed', reveal:true, q:'La Adrenalina L viene a 1 mg/mL. Si la dosis es 0,5 mg/kg, ¿a cuántos mL/kg equivale?',
+  {topic:'tratamiento', cat:'mixed', reveal:true, q:'La Adrenalina L viene a 1 mg/mL. Si la dosis es 0,5 mg/kg, ¿a cuántos mL/kg equivale?',
     opts:['0,5 mL/kg','1 mL/kg','0,05 mL/kg','5 mL/kg'], correct:'0,5 mL/kg', boss:true,
     exp:'Como la concentración es 1 mg por 1 mL, mg/kg y mL/kg coinciden numéricamente: 0,5 mg/kg = 0,5 mL/kg.'},
-  {cat:'mixed', reveal:true, q:'¿Cuál de los dos protocolos exige asociar siempre un corticoide sistémico?',
+  {topic:'tratamiento', cat:'mixed', reveal:true, q:'¿Cuál de los dos protocolos de nebulización exige asociar siempre un corticoide sistémico?',
     opts:['Adrenalina para croup (dexametasona)','Salbutamol para crisis asmática','Ambos por igual','Ninguno de los dos'], correct:'Adrenalina para croup (dexametasona)',
     exp:'Según esta pauta, la adrenalina para croup siempre va con dexametasona asociada.'},
-  {cat:'mixed', reveal:true, q:'¿Cuál de los dos nebulizados requiere observación prolongada (2–3 h) por riesgo de efecto rebote?',
+  {topic:'tratamiento', cat:'mixed', reveal:true, q:'¿Cuál de los dos nebulizados requiere observación prolongada (2–3 h) por riesgo de efecto rebote?',
     opts:['Adrenalina para croup','Salbutamol para crisis asmática','Ambos por igual','Ninguno'], correct:'Adrenalina para croup',
     exp:'El efecto rebote y la observación de 2–3 h son propios del protocolo de adrenalina, no del salbutamol.'},
-
-  // ---- ESCENARIOS (discriminación — tag oculto) ----
-  {cat:'mixed', reveal:false, q:'Niño con sibilancias, tiraje y espiración prolongada, sin estridor ni tos perruna. ¿Qué nebulización corresponde?',
+  {topic:'tratamiento', cat:'mixed', reveal:false, q:'Niño con sibilancias, tiraje y espiración prolongada, sin estridor ni tos perruna. ¿Qué nebulización corresponde?',
     opts:['Salbutamol','Adrenalina','Ambas a la vez','Ninguna, sólo dexametasona'], correct:'Salbutamol',
     exp:'Sibilancias + espiración prolongada, sin estridor, es cuadro de broncoespasmo → salbutamol.'},
-  {cat:'mixed', reveal:false, q:'Niño con estridor inspiratorio, tos "perruna" y disfonía de inicio brusco. ¿Qué nebulización corresponde?',
+  {topic:'tratamiento', cat:'mixed', reveal:false, q:'Niño con estridor inspiratorio, tos "perruna" y disfonía de inicio brusco. ¿Qué nebulización corresponde?',
     opts:['Adrenalina', 'Salbutamol','Ambas a la vez','Ninguna, sólo observación'], correct:'Adrenalina',
     exp:'Estridor + tos perruna + disfonía es el cuadro clásico de croup (laringitis obstructiva) → adrenalina nebulizada + dexametasona.'},
 ];
@@ -576,23 +766,32 @@ const BANK = [
 const BADGES = [
   {id:'streak5', icon:'🎯', name:'Racha de 5'},
   {id:'streak10', icon:'🔥', name:'Racha de 10'},
+  {id:'clinicoAgudo', icon:'🩺', name:'Sabe de SBO'},
+  {id:'detective', icon:'🔬', name:'Detective Dx'},
+  {id:'calculador', icon:'📊', name:'Calculador Tal/PRAM'},
   {id:'salbuMaster', icon:'🫁', name:'Maestro Salbutamol'},
   {id:'croupTamer', icon:'👶', name:'Domador del Croup'},
-  {id:'perfectMixed', icon:'💯', name:'Ronda perfecta'},
+  {id:'farmacoMaster', icon:'💊', name:'Maestro del Tratamiento'},
+  {id:'globalMaster', icon:'🎓', name:'Repaso Total Perfecto'},
+  {id:'allRounder', icon:'🌟', name:'Residente Integral'},
   {id:'jefe', icon:'👑', name:'Jefe de Residentes'},
 ];
 
-const IDLE_LINES = ['Dale, vos podés 👀','A ver qué sabés 🧐','Pensalo con calma','¿Qué dice el protocolo?','Tranqui, respirá y contestá 😌'];
+const IDLE_LINES = ['Dale, vos podés 👀','A ver qué sabés 🧐','Pensalo con calma','¿Qué dice el texto?','Tranqui, respirá y contestá 😌'];
 const HAPPY_LINES = ['¡Sipo! 🎯','Ahí está, seco 💪','Exacto, como corresponde 🫡','Eso, dominado 🔥','Bien ahí, colega 🩺'];
 const SOFT_LINES = ['Uy, esa no era. Dale, la próxima 💛','Casi, mirá el porqué 👇','Nah, pero con la explicación va a pegar','Fail momentáneo, seguimos 🙂'];
 
 function randomOf(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 function prefersReducedMotion(){ return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+function foldAccents(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
+function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
 
 /* ---------------- persistent storage ---------------- */
-const STORAGE_KEY = 'nebulizalo-progress';
-let persisted = {xp:0, bestStreak:0, totalRounds:0, salbuCorrect:0, salbuTotal:0, adrenCorrect:0, adrenTotal:0, badges:[], soundOn:true};
-let storageOK = true;
+const STORAGE_KEY = 'nebulizalo-progress-v2';
+let persisted = {
+  xp:0, bestStreak:0, totalRounds:0, badges:[], soundOn:true,
+  topics:{ clinica:{c:0,t:0}, examenes:{c:0,t:0}, categorizacion:{c:0,t:0}, tratamiento:{c:0,t:0} }
+};
 
 async function loadPersisted(){
   try{
@@ -600,25 +799,21 @@ async function loadPersisted(){
     if(raw){
       const parsed = JSON.parse(raw);
       persisted = Object.assign(persisted, parsed);
+      if(!persisted.topics) persisted.topics = {clinica:{c:0,t:0},examenes:{c:0,t:0},categorizacion:{c:0,t:0},tratamiento:{c:0,t:0}};
     }
-  }catch(e){ storageOK = false; }
+  }catch(e){}
   refreshSoundIcon();
-  renderProgressTeaser();
+  renderHome();
 }
 async function savePersisted(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
-  }catch(e){ storageOK = false; }
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted)); }catch(e){}
 }
 
 function levelInfo(xp){
   const tiers = [
-    {min:0, name:'Interno', icon:'🩺'},
-    {min:100, name:'Interno Senior', icon:'🩺'},
-    {min:250, name:'R1 Pediatría', icon:'⭐'},
-    {min:500, name:'R2 Pediatría', icon:'⭐⭐'},
-    {min:900, name:'R3 Pediatría', icon:'⭐⭐⭐'},
-    {min:1500, name:'Jefe de Residentes', icon:'👑'},
+    {min:0, name:'Interno', icon:'🩺'}, {min:100, name:'Interno Senior', icon:'🩺'},
+    {min:250, name:'R1 Pediatría', icon:'⭐'}, {min:500, name:'R2 Pediatría', icon:'⭐⭐'},
+    {min:900, name:'R3 Pediatría', icon:'⭐⭐⭐'}, {min:1500, name:'Jefe de Residentes', icon:'👑'},
   ];
   let current = tiers[0];
   for(const t of tiers){ if(xp >= t.min) current = t; }
@@ -627,29 +822,21 @@ function levelInfo(xp){
 
 /* ---------------- sound ---------------- */
 let audioCtx = null;
-function ensureAudio(){
-  if(!audioCtx){
-    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
-  }
-}
+function ensureAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
 function tone(freq, dur, delay, type){
   if(!persisted.soundOn) return;
-  ensureAudio();
-  if(!audioCtx) return;
+  ensureAudio(); if(!audioCtx) return;
   setTimeout(function(){
     try{
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.type = type || 'sine';
-      o.frequency.value = freq;
-      o.connect(g); g.connect(audioCtx.destination);
-      const now = audioCtx.currentTime;
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type=type||'sine'; o.frequency.value=freq; o.connect(g); g.connect(audioCtx.destination);
+      const now=audioCtx.currentTime;
       g.gain.setValueAtTime(0.0001, now);
       g.gain.exponentialRampToValueAtTime(0.18, now+0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, now+dur);
       o.start(now); o.stop(now+dur+0.02);
     }catch(e){}
-  }, delay || 0);
+  }, delay||0);
 }
 function sfxCorrect(){ tone(660,.12,0); tone(880,.14,90); }
 function sfxWrong(){ tone(220,.22,0); }
@@ -658,290 +845,299 @@ function sfxBadge(){ tone(523,.12,0); tone(659,.12,90); tone(784,.12,180); tone(
 
 const soundToggle = document.getElementById('sound-toggle');
 function refreshSoundIcon(){ soundToggle.textContent = persisted.soundOn ? '🔊' : '🔇'; }
-soundToggle.addEventListener('click', function(){
-  persisted.soundOn = !persisted.soundOn;
-  refreshSoundIcon();
-  savePersisted();
-});
+soundToggle.addEventListener('click', function(){ persisted.soundOn=!persisted.soundOn; refreshSoundIcon(); savePersisted(); });
 
 /* ---------------- state ---------------- */
-let mode = 'mixto';
-let roundLen = 12;
-let round = null;
+let currentTopic='tratamiento';
+let currentSub='mixto';
+let roundLen=12;
+let round=null;
 
 function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    const tmp = a[i]; a[i]=a[j]; a[j]=tmp;
-  }
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const tmp=a[i]; a[i]=a[j]; a[j]=tmp; }
   return a;
 }
-function poolForMode(m){
-  if(m==='mixto') return BANK;
-  return BANK.filter(function(q){ return q.cat===m; });
+function poolForTopic(topic, sub){
+  if(topic==='todos') return BANK;
+  if(topic!=='tratamiento') return BANK.filter(function(q){ return q.topic===topic; });
+  if(sub==='mixto') return BANK.filter(function(q){ return q.topic==='tratamiento'; });
+  return BANK.filter(function(q){ return q.topic==='tratamiento' && q.cat===sub; });
 }
 
-/* ---------------- DOM refs ---------------- */
+/* ---------------- screens ---------------- */
 const screens = {
-  start: document.getElementById('screen-start'),
+  home: document.getElementById('screen-home'),
+  config: document.getElementById('screen-config'),
   game: document.getElementById('screen-game'),
   summary: document.getElementById('screen-summary'),
+  bank: document.getElementById('screen-bank'),
 };
 function showScreen(name){
   Object.keys(screens).forEach(function(k){ screens[k].classList.remove('active'); });
   screens[name].classList.add('active');
 }
 
-const modeRow = document.getElementById('mode-row');
-const lenRow = document.getElementById('len-row');
-modeRow.addEventListener('click', function(e){
-  const pill = e.target.closest('.pill'); if(!pill) return;
-  mode = pill.dataset.mode;
-  [].forEach.call(modeRow.children, function(p){ p.classList.toggle('on', p===pill); });
-});
-lenRow.addEventListener('click', function(e){
-  const pill = e.target.closest('.pill'); if(!pill) return;
-  roundLen = parseInt(pill.dataset.len,10);
-  [].forEach.call(lenRow.children, function(p){ p.classList.toggle('on', p===pill); });
-});
-function pillKeyHandler(row){
-  row.addEventListener('keydown', function(e){
-    if(e.key==='Enter' || e.key===' '){ e.preventDefault(); e.target.click(); }
-  });
-}
-pillKeyHandler(modeRow); pillKeyHandler(lenRow);
-
-const cheatToggle = document.getElementById('cheat-toggle');
-const cheatsheet = document.getElementById('cheatsheet');
-cheatToggle.addEventListener('click', function(){
-  const open = cheatsheet.classList.toggle('open');
-  cheatToggle.setAttribute('aria-expanded', open);
-  cheatToggle.textContent = open ? '📋 Ocultar resumen' : '📋 Ver resumen antes de jugar';
-});
-
+/* ---------------- home ---------------- */
 function renderBadgeShelf(){
   const row = document.getElementById('badge-row');
   row.innerHTML = BADGES.map(function(b){
-    const unlocked = persisted.badges.indexOf(b.id) !== -1;
+    const unlocked = persisted.badges.indexOf(b.id)!==-1;
     return '<div class="badge-chip'+(unlocked?' unlocked':'')+'">'+b.icon+'<div class="blabel">'+b.name+'</div></div>';
   }).join('');
 }
-
-function renderProgressTeaser(){
+function renderHome(){
   const lvl = levelInfo(persisted.xp);
   document.getElementById('progress-teaser').innerHTML =
-    '<span>' + lvl.icon + ' <b>' + lvl.name + '</b></span><span>Racha récord: <b>' + persisted.bestStreak + '</b> 🔥</span>';
+    '<span>'+lvl.icon+' <b>'+lvl.name+'</b></span><span>Racha récord: <b>'+persisted.bestStreak+'</b> 🔥</span>';
   renderBadgeShelf();
+  ['clinica','examenes','categorizacion','tratamiento'].forEach(function(k){
+    const s = persisted.topics[k];
+    const el = document.getElementById('tmastery-'+k);
+    el.textContent = s.t ? Math.round(s.c/s.t*100)+'% dominio' : 'Sin datos';
+  });
+  let sumC=0, sumT=0;
+  Object.keys(persisted.topics).forEach(function(k){ sumC+=persisted.topics[k].c; sumT+=persisted.topics[k].t; });
+  document.getElementById('tmastery-todos').textContent = sumT ? Math.round(sumC/sumT*100)+'% dominio' : 'Sin datos';
+  document.getElementById('tdesc-todos').textContent = BANK.length+' preguntas de los 4 temas, mezcladas.';
 }
 
+document.getElementById('topic-grid').addEventListener('click', function(e){
+  const card=e.target.closest('.topic-card'); if(!card) return;
+  openConfig(card.dataset.topic);
+});
+document.getElementById('topic-grid').addEventListener('keydown', function(e){
+  if(e.key==='Enter'||e.key===' '){ const card=e.target.closest('.topic-card'); if(card){ e.preventDefault(); openConfig(card.dataset.topic); } }
+});
+document.getElementById('bank-btn').addEventListener('click', function(){ showScreen('bank'); renderBankList(); });
+
+/* ---------------- config ---------------- */
+const submodeSection = document.getElementById('submode-section');
+const submodeRow = document.getElementById('submode-row');
+const lenRow = document.getElementById('len-row');
+const cheatToggle = document.getElementById('cheat-toggle');
+const cheatsheet = document.getElementById('cheatsheet');
+
+const CLIN_CHEAT = '<div class="cheat-card salbu"><b>🩺 SBO en el lactante</b>BA (VRS, &lt;1 año, primera infección, neutrófilos) vs Asma del lactante (recurrente, eosinófilos). Ambas gatilladas frecuentemente por infección viral.</div>'+
+  '<div class="cheat-card adren"><b>📋 Tabla 1 · Enfermedades que se presentan como SBO</b>'+TABLA1_HTML+'</div>';
+const EXAM_CHEAT = '<div class="cheat-card salbu"><b>🔬 Cuándo estudiar más allá de lo clínico</b>BA = diagnóstico clínico, sin Rx ni virológico de rutina. Espirometría con BD desde ~5 años. Señales de alarma → buscar causa secundaria.</div>'+
+  '<div class="cheat-card adren"><b>📋 Tabla 3 · Diagnóstico diferencial de SBO</b>'+TABLA3_HTML+'</div>';
+const CAT_CHEAT = '<div class="cheat-card salbu"><b>📊 Tabla 2 · Score de Tal (lactante)</b>'+TAL_TABLE_HTML+'</div>'+
+  '<div class="cheat-card adren"><b>📊 Tabla 4 · Score PRAM (asma)</b>'+PRAM_TABLE_HTML+'</div>';
+const TRAT_CHEAT = '<div class="cheat-card salbu"><b>🫁 Salbutamol (crisis asmática)</b>0,15 mg/kg/dosis (mín 2,5 mg – máx 5 mg) · &lt;20 kg = 2,5 mg · ≥20 kg = 5 mg · SF hasta 3–4 mL · O2 6–8 L/min · 10–15 min.</div>'+
+  '<div class="cheat-card adren"><b>👶 Adrenalina L (croup)</b>1:1000 = 1 mg/mL · 0,5 mL/kg (máx 5 mL) · si &lt;4 mL completar con SF hasta 4–5 mL · O2 6–8 L/min · 10–15 min · observar 2–3 h · siempre con dexametasona.</div>'+
+  '<div class="cheat-card salbu"><b>📋 Algoritmo por gravedad (crisis de asma)</b>'+ALGO_TABLE_HTML+'</div>'+
+  '<div class="cheat-card adren"><b>🌍 GINA · pasos de tratamiento crónico</b>'+GINA_TABLE_HTML+'</div>';
+
+function cheatContentFor(topic){
+  if(topic==='clinica') return CLIN_CHEAT;
+  if(topic==='examenes') return EXAM_CHEAT;
+  if(topic==='categorizacion') return CAT_CHEAT;
+  if(topic==='todos') return CLIN_CHEAT+EXAM_CHEAT+CAT_CHEAT+TRAT_CHEAT;
+  return TRAT_CHEAT;
+}
+
+function openConfig(topic){
+  currentTopic = topic;
+  const meta = TOPIC_META[topic];
+  document.getElementById('config-icon').textContent = meta.icon;
+  document.getElementById('config-title').textContent = meta.name;
+  document.getElementById('config-sub').textContent = meta.desc;
+
+  if(topic==='tratamiento'){
+    submodeSection.classList.remove('hidden');
+    currentSub='mixto';
+    [].forEach.call(submodeRow.children, function(p){ p.classList.toggle('on', p.dataset.sub==='mixto'); });
+  } else {
+    submodeSection.classList.add('hidden');
+    currentSub='';
+  }
+
+  cheatsheet.classList.remove('open');
+  cheatToggle.setAttribute('aria-expanded','false');
+  cheatToggle.textContent='📋 Ver referencia antes de jugar';
+  cheatsheet.innerHTML = cheatContentFor(topic);
+
+  showScreen('config');
+}
+
+submodeRow.addEventListener('click', function(e){
+  const pill=e.target.closest('.pill'); if(!pill) return;
+  currentSub = pill.dataset.sub;
+  [].forEach.call(submodeRow.children, function(p){ p.classList.toggle('on', p===pill); });
+});
+lenRow.addEventListener('click', function(e){
+  const pill=e.target.closest('.pill'); if(!pill) return;
+  roundLen = pill.dataset.len==='all' ? 'all' : parseInt(pill.dataset.len,10);
+  [].forEach.call(lenRow.children, function(p){ p.classList.toggle('on', p===pill); });
+});
+function pillKeyHandler(row){
+  row.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.target.click(); } });
+}
+pillKeyHandler(submodeRow); pillKeyHandler(lenRow);
+
+cheatToggle.addEventListener('click', function(){
+  const open = cheatsheet.classList.toggle('open');
+  cheatToggle.setAttribute('aria-expanded', open);
+  cheatToggle.textContent = open ? '📋 Ocultar referencia' : '📋 Ver referencia antes de jugar';
+});
+
+document.getElementById('config-back').addEventListener('click', function(){ showScreen('home'); renderHome(); });
 document.getElementById('start-btn').addEventListener('click', startRound);
 
+/* ---------------- game ---------------- */
+const qtag=document.getElementById('qtag'), qtext=document.getElementById('qtext'), optsEl=document.getElementById('opts');
+const feedback=document.getElementById('feedback'), verdict=document.getElementById('verdict'), explanation=document.getElementById('explanation');
+const nextBtn=document.getElementById('next-btn'), hudStreak=document.getElementById('hud-streak'), hudProgress=document.getElementById('hud-progress');
+const mascotFace=document.getElementById('mascot-face'), mascotBubble=document.getElementById('mascot-bubble');
+const qcardEl=document.getElementById('qcard'), bossRibbon=document.getElementById('boss-ribbon');
+const qTableContainer=document.getElementById('q-table-container');
+
+function sayMascot(mood, text){
+  const emojis={idle:'🧑\u200d⚕️', happy:'😄', soft:'🙂', hype:'🤩', boss:'🚨'};
+  mascotFace.textContent = emojis[mood] || '🧑\u200d⚕️';
+  mascotBubble.textContent = text;
+  mascotFace.classList.remove('bounce'); void mascotFace.offsetWidth; mascotFace.classList.add('bounce');
+}
+
 function startRound(){
-  const pool = shuffle(poolForMode(mode));
-  const n = Math.min(roundLen, pool.length);
+  const pool = shuffle(poolForTopic(currentTopic, currentSub));
+  const n = roundLen==='all' ? pool.length : Math.min(roundLen, pool.length);
   round = {
-    questions: pool.slice(0, n),
-    idx: 0,
-    score: 0,
-    streak: 0,
-    maxStreak: 0,
-    xpGained: 0,
-    results: [],
-    catStats: {salbu:{c:0,t:0}, adren:{c:0,t:0}},
-    missed: [],
+    questions: pool.slice(0,n), idx:0, score:0, streak:0, maxStreak:0, xpGained:0, results:[], missed:[],
+    byTopic: {clinica:{c:0,t:0}, examenes:{c:0,t:0}, categorizacion:{c:0,t:0}, tratamiento:{c:0,t:0}}
   };
   showScreen('game');
   renderQuestion();
 }
 
-/* ---------------- game screen ---------------- */
-const qtag = document.getElementById('qtag');
-const qtext = document.getElementById('qtext');
-const optsEl = document.getElementById('opts');
-const feedback = document.getElementById('feedback');
-const verdict = document.getElementById('verdict');
-const explanation = document.getElementById('explanation');
-const nextBtn = document.getElementById('next-btn');
-const hudStreak = document.getElementById('hud-streak');
-const hudProgress = document.getElementById('hud-progress');
-const mascotFace = document.getElementById('mascot-face');
-const mascotBubble = document.getElementById('mascot-bubble');
-const qcardEl = document.getElementById('qcard');
-const bossRibbon = document.getElementById('boss-ribbon');
-
-function sayMascot(mood, text){
-  const emojis = {idle:'🧑\u200d⚕️', happy:'😄', soft:'🙂', hype:'🤩', boss:'🚨'};
-  mascotFace.textContent = emojis[mood] || '🧑\u200d⚕️';
-  mascotBubble.textContent = text;
-  mascotFace.classList.remove('bounce');
-  void mascotFace.offsetWidth;
-  mascotFace.classList.add('bounce');
+function tagFor(q){
+  if(q.topic!=='tratamiento'){ const m=TOPIC_META[q.topic]; return {text:m.icon+' '+m.name, cls:'tag '+q.topic}; }
+  if(!q.reveal) return {text:'🩺 Caso clínico', cls:'tag mixed'};
+  if(q.cat==='salbu') return {text:'🫁 Salbutamol', cls:'tag salbu'};
+  if(q.cat==='adren') return {text:'👶 Adrenalina · Croup', cls:'tag adren'};
+  if(q.cat==='manejo') return {text:'📋 Manejo & Fármacos', cls:'tag mixed'};
+  if(q.cat==='cronico') return {text:'🫧 Control crónico & BA', cls:'tag mixed'};
+  return {text:'🔀 Ambos protocolos', cls:'tag mixed'};
 }
 
-function effectiveCat(q){
-  return q.cat === 'salbu' ? 'salbu' : (q.cat === 'adren' ? 'adren' : null);
-}
-
-function updateRings(){
-  const s = round.catStats.salbu, a = round.catStats.adren;
-  const pct = function(c,t){ return t ? Math.round(c/t*100) : null; };
-  const sp = pct(s.c,s.t), ap = pct(a.c,a.t);
-  const circ = 75.4;
-  const salbuFill = document.getElementById('ring-salbu-fill');
-  const adrenFill = document.getElementById('ring-adren-fill');
-  salbuFill.style.strokeDashoffset = sp===null ? circ : circ - (circ*sp/100);
-  adrenFill.style.strokeDashoffset = ap===null ? circ : circ - (circ*ap/100);
-  document.getElementById('ring-salbu-txt').textContent = sp===null ? '–' : sp+'%';
-  document.getElementById('ring-adren-txt').textContent = ap===null ? '–' : ap+'%';
+function updateRing(){
+  const total = round.results.filter(function(r){return r!==undefined;}).length;
+  const correct = round.results.filter(function(r){return r===true;}).length;
+  const pct = total ? Math.round(correct/total*100) : null;
+  const circ=75.4;
+  document.getElementById('ring-fill').style.strokeDashoffset = pct===null ? circ : circ-(circ*pct/100);
+  document.getElementById('ring-txt').textContent = pct===null ? '–' : pct+'%';
 }
 
 function renderPathDots(){
   const row = document.getElementById('path-row');
   row.innerHTML = round.questions.map(function(q,i){
-    let cls='path-dot';
-    const r = round.results[i];
-    if(r===true) cls+=' correct';
-    else if(r===false) cls+=' wrong';
-    else if(i===round.idx) cls+=' current';
+    let cls='path-dot'; const r=round.results[i];
+    if(r===true) cls+=' correct'; else if(r===false) cls+=' wrong'; else if(i===round.idx) cls+=' current';
     return '<div class="'+cls+'"></div>';
   }).join('');
 }
 
 function floatXP(amount){
-  const wrap = document.getElementById('hud-streak-wrap');
-  const el = document.createElement('div');
-  el.className='floatxp';
-  el.textContent = '+'+amount;
-  wrap.appendChild(el);
-  setTimeout(function(){ el.remove(); }, 820);
+  const wrap=document.getElementById('hud-streak-wrap');
+  const el=document.createElement('div'); el.className='floatxp'; el.textContent='+'+amount;
+  wrap.appendChild(el); setTimeout(function(){ el.remove(); }, 820);
 }
 
 function renderQuestion(){
   const q = round.questions[round.idx];
   hudStreak.textContent = round.streak;
-  hudProgress.textContent = (round.idx+1) + '/' + round.questions.length;
-  updateRings();
-  renderPathDots();
+  hudProgress.textContent = (round.idx+1)+'/'+round.questions.length;
+  updateRing(); renderPathDots();
 
   qcardEl.classList.toggle('boss', !!q.boss);
   bossRibbon.classList.toggle('show', !!q.boss);
+  sayMascot(q.boss?'boss':'idle', q.boss?'🚨 Ojo con esta, de las que trampean en el examen':randomOf(IDLE_LINES));
 
-  if(q.boss){
-    sayMascot('boss', '🚨 Ojo con esta, de las que trampean en el examen');
-  } else {
-    sayMascot('idle', randomOf(IDLE_LINES));
-  }
-
-  if(q.reveal){
-    if(q.cat==='salbu'){ qtag.textContent='🫁 Salbutamol'; qtag.className='tag salbu'; }
-    else if(q.cat==='adren'){ qtag.textContent='👶 Adrenalina · Croup'; qtag.className='tag adren'; }
-    else { qtag.textContent='🔀 Ambos protocolos'; qtag.className='tag mixed'; }
-  } else {
-    qtag.textContent = '🩺 Caso clínico';
-    qtag.className = 'tag mixed';
-  }
-
+  const t = tagFor(q);
+  qtag.textContent = t.text; qtag.className = t.cls;
   qtext.textContent = q.q;
+  qTableContainer.innerHTML = q.table ? q.table : '';
 
   const shuffledOpts = shuffle(q.opts);
-  optsEl.innerHTML = '';
+  optsEl.innerHTML='';
   shuffledOpts.forEach(function(optText){
-    const btn = document.createElement('button');
-    btn.className = 'opt';
-    btn.textContent = optText;
+    const btn=document.createElement('button'); btn.className='opt'; btn.textContent=optText;
     btn.addEventListener('click', function(){ selectAnswer(optText, q); });
     optsEl.appendChild(btn);
   });
 
-  feedback.className = 'feedback';
-  feedback.classList.remove('show');
+  feedback.className='feedback'; feedback.classList.remove('show');
   nextBtn.classList.remove('show');
 }
 
 let toastTimer;
 function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1400);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('show'); },1400);
 }
 
 function selectAnswer(chosen, q){
-  const buttons = [].slice.call(optsEl.children);
+  const buttons=[].slice.call(optsEl.children);
   buttons.forEach(function(b){
-    b.disabled = true;
-    if(b.textContent === q.correct) b.classList.add('correct');
-    else if(b.textContent === chosen) b.classList.add('wrong');
+    b.disabled=true;
+    if(b.textContent===q.correct) b.classList.add('correct');
+    else if(b.textContent===chosen) b.classList.add('wrong');
     else b.classList.add('dim');
   });
 
-  const isCorrect = chosen === q.correct;
-  const cat = effectiveCat(q);
-  if(cat){
-    round.catStats[cat].t++;
-    if(isCorrect) round.catStats[cat].c++;
-  }
+  const isCorrect = chosen===q.correct;
   round.results[round.idx] = isCorrect;
+  const bt = round.byTopic[q.topic];
+  bt.t++; if(isCorrect) bt.c++;
 
   if(isCorrect){
-    round.score++;
-    round.streak++;
-    round.maxStreak = Math.max(round.maxStreak, round.streak);
-    const bonus = round.streak>=10 ? 10 : (round.streak>=5 ? 5 : 0);
-    const gained = (10+bonus) * (q.boss ? 2 : 1);
-    round.xpGained += gained;
-    floatXP(gained);
-    feedback.classList.add('good');
-    verdict.textContent = '✅ Correcto';
-    if([3,5,8,10,12,16].indexOf(round.streak) !== -1){
+    round.score++; round.streak++; round.maxStreak=Math.max(round.maxStreak, round.streak);
+    const bonus = round.streak>=10?10:(round.streak>=5?5:0);
+    const gained = (10+bonus)*(q.boss?2:1);
+    round.xpGained += gained; floatXP(gained);
+    feedback.classList.add('good'); verdict.textContent='✅ Correcto';
+    if([3,5,8,10,12,16].indexOf(round.streak)!==-1){
       showToast('¡En racha! 🔥 x'+round.streak);
-      sayMascot('hype', 'Racha x'+round.streak+' 🔥 seguí así');
-      sfxStreak();
-    } else {
-      sayMascot('happy', randomOf(HAPPY_LINES));
-      sfxCorrect();
-    }
+      sayMascot('hype','Racha x'+round.streak+' 🔥 seguí así'); sfxStreak();
+    } else { sayMascot('happy', randomOf(HAPPY_LINES)); sfxCorrect(); }
   } else {
-    round.streak = 0;
-    round.missed.push({q: q.q, a: q.correct, exp: q.exp});
-    feedback.classList.add('bad');
-    verdict.textContent = '❌ No era esa';
-    sayMascot('soft', randomOf(SOFT_LINES));
-    sfxWrong();
+    round.streak=0;
+    round.missed.push({q:q.q, a:q.correct, exp:q.exp});
+    feedback.classList.add('bad'); verdict.textContent='❌ No era esa';
+    sayMascot('soft', randomOf(SOFT_LINES)); sfxWrong();
   }
   explanation.textContent = q.exp;
-  feedback.classList.add('show');
-  nextBtn.classList.add('show');
-  updateRings();
-  hudStreak.textContent = round.streak;
-  renderPathDots();
+  feedback.classList.add('show'); nextBtn.classList.add('show');
+  updateRing(); hudStreak.textContent=round.streak; renderPathDots();
 }
 
 nextBtn.addEventListener('click', function(){
   round.idx++;
-  if(round.idx >= round.questions.length){
-    endRound();
-  } else {
-    renderQuestion();
-  }
+  if(round.idx >= round.questions.length) endRound(); else renderQuestion();
 });
 
 /* ---------------- badges ---------------- */
 function checkBadges(roundResult){
-  const newly = [];
-  function unlock(id){
-    if(persisted.badges.indexOf(id) === -1){
-      persisted.badges.push(id);
-      newly.push(id);
-    }
-  }
+  const newly=[];
+  function unlock(id){ if(persisted.badges.indexOf(id)===-1){ persisted.badges.push(id); newly.push(id); } }
   if(roundResult.maxStreak>=5) unlock('streak5');
   if(roundResult.maxStreak>=10) unlock('streak10');
-  if(mode==='salbu' && roundResult.total>=8 && roundResult.score===roundResult.total) unlock('salbuMaster');
-  if(mode==='adren' && roundResult.total>=8 && roundResult.score===roundResult.total) unlock('croupTamer');
-  if(mode==='mixto' && roundResult.score===roundResult.total) unlock('perfectMixed');
+  const perfect = roundResult.score===roundResult.total && roundResult.total>=8;
+  if(perfect){
+    if(currentTopic==='clinica') unlock('clinicoAgudo');
+    if(currentTopic==='examenes') unlock('detective');
+    if(currentTopic==='categorizacion') unlock('calculador');
+    if(currentTopic==='todos') unlock('globalMaster');
+    if(currentTopic==='tratamiento'){
+      if(currentSub==='salbu') unlock('salbuMaster');
+      if(currentSub==='adren') unlock('croupTamer');
+      if(currentSub==='mixto') unlock('farmacoMaster');
+    }
+  }
+  const tp = persisted.topics;
+  if(tp.clinica.t>0 && tp.examenes.t>0 && tp.categorizacion.t>0 && tp.tratamiento.t>0) unlock('allRounder');
   if(persisted.xp>=1500) unlock('jefe');
   return newly;
 }
@@ -949,105 +1145,126 @@ function checkBadges(roundResult){
 /* ---------------- confetti ---------------- */
 function burstConfetti(){
   if(prefersReducedMotion()) return;
-  const colors=['#5ab2ff','#3ddba0','#ffc266','#ff8577'];
+  const colors=['#5ab2ff','#3ddba0','#ffc266','#ff8577','#b78bff'];
   for(let i=0;i<26;i++){
-    const el=document.createElement('div');
-    el.className='confetti-piece';
-    el.style.left = Math.random()*100+'vw';
-    el.style.background = colors[Math.floor(Math.random()*colors.length)];
-    el.style.animationDuration = (1.6+Math.random()*1.2)+'s';
-    el.style.transform = 'rotate('+Math.floor(Math.random()*360)+'deg)';
+    const el=document.createElement('div'); el.className='confetti-piece';
+    el.style.left=Math.random()*100+'vw';
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration=(1.6+Math.random()*1.2)+'s';
+    el.style.transform='rotate('+Math.floor(Math.random()*360)+'deg)';
     document.body.appendChild(el);
     setTimeout(function(){ el.remove(); }, 3000);
   }
 }
-
 function performanceLine(pct){
   if(pct>=0.9) return '¡Andás volando! 🚀 Esto ya te lo sabés.';
   if(pct>=0.7) return 'Bien ahí, casi perfecto 💪';
   if(pct>=0.5) return 'Vamos mejorando, dale otra vuelta 🔁';
   return 'Repasemos con calma, para eso está el resumen de abajo 👇';
 }
+function renderMasteryBars(){
+  const order=['clinica','examenes','categorizacion','tratamiento'];
+  document.getElementById('summary-bars').innerHTML = order.map(function(k){
+    const s=persisted.topics[k]; const pct=s.t?Math.round(s.c/s.t*100):0; const m=TOPIC_META[k];
+    return '<div class="bar-row"><div class="bar-row-top"><span>'+m.icon+' '+m.name+'</span><span class="mono">'+pct+'%</span></div><div class="bar-track"><div class="bar-fill '+k+'" style="width:'+pct+'%"></div></div></div>';
+  }).join('');
+}
 
 /* ---------------- summary ---------------- */
 async function endRound(){
-  const xpGained = round.xpGained || 0;
+  const xpGained = round.xpGained||0;
   const prevLevel = levelInfo(persisted.xp);
 
   persisted.xp += xpGained;
   persisted.totalRounds++;
   persisted.bestStreak = Math.max(persisted.bestStreak, round.maxStreak);
-  persisted.salbuCorrect += round.catStats.salbu.c;
-  persisted.salbuTotal += round.catStats.salbu.t;
-  persisted.adrenCorrect += round.catStats.adren.c;
-  persisted.adrenTotal += round.catStats.adren.t;
+  Object.keys(round.byTopic).forEach(function(k){
+    persisted.topics[k].c += round.byTopic[k].c;
+    persisted.topics[k].t += round.byTopic[k].t;
+  });
 
   const roundResult = {score:round.score, total:round.questions.length, maxStreak:round.maxStreak};
   const newlyUnlocked = checkBadges(roundResult);
   const newLevel = levelInfo(persisted.xp);
   await savePersisted();
 
-  document.getElementById('sum-score').textContent = round.score + '/' + round.questions.length;
-  document.getElementById('sum-sub').textContent = 'Racha máxima: ' + round.maxStreak + '  ·  +' + xpGained + ' XP';
+  document.getElementById('sum-score').textContent = round.score+'/'+round.questions.length;
+  document.getElementById('sum-sub').textContent = 'Racha máxima: '+round.maxStreak+'  ·  +'+xpGained+' XP';
   document.getElementById('sum-line').textContent = performanceLine(round.score/round.questions.length);
 
-  const levelUpEl = document.getElementById('level-up');
-  if(newLevel.name !== prevLevel.name){
-    levelUpEl.textContent = '🎉 ¡Subiste de nivel! Ahora eres ' + newLevel.icon + ' ' + newLevel.name;
+  const levelUpEl=document.getElementById('level-up');
+  if(newLevel.name!==prevLevel.name){
+    levelUpEl.textContent='🎉 ¡Subiste de nivel! Ahora eres '+newLevel.icon+' '+newLevel.name;
     levelUpEl.classList.add('show');
-  } else {
-    levelUpEl.classList.remove('show');
-  }
+  } else levelUpEl.classList.remove('show');
 
-  const badgesEl = document.getElementById('badges-unlocked');
+  const badgesEl=document.getElementById('badges-unlocked');
   if(newlyUnlocked.length){
-    badgesEl.innerHTML = '🏅 ¡Nueva insignia! ' + newlyUnlocked.map(function(id){
-      const b = BADGES.filter(function(x){ return x.id===id; })[0];
-      return b.icon+' '+b.name;
+    badgesEl.innerHTML='🏅 ¡Nueva insignia! '+newlyUnlocked.map(function(id){
+      const b=BADGES.filter(function(x){return x.id===id;})[0]; return b.icon+' '+b.name;
     }).join(' · ');
     badgesEl.classList.add('show');
-  } else {
-    badgesEl.innerHTML='';
-    badgesEl.classList.remove('show');
-  }
+  } else { badgesEl.innerHTML=''; badgesEl.classList.remove('show'); }
 
-  const sp = persisted.salbuTotal ? Math.round(persisted.salbuCorrect/persisted.salbuTotal*100) : 0;
-  const ap = persisted.adrenTotal ? Math.round(persisted.adrenCorrect/persisted.adrenTotal*100) : 0;
-  document.getElementById('bar-salbu').style.width = sp+'%';
-  document.getElementById('bar-adren').style.width = ap+'%';
-  document.getElementById('bar-salbu-txt').textContent = sp+'%';
-  document.getElementById('bar-adren-txt').textContent = ap+'%';
-  document.getElementById('level-name').textContent = newLevel.icon + ' ' + newLevel.name;
-  document.getElementById('xp-txt').textContent = persisted.xp + ' XP';
+  renderMasteryBars();
 
-  const missedEl = document.getElementById('missed');
+  const missedEl=document.getElementById('missed');
   if(round.missed.length===0){
-    missedEl.innerHTML = '<p class="missed-none">🎯 Ronda perfecta, ni una fallada.</p>';
+    missedEl.innerHTML='<p class="missed-none">🎯 Ronda perfecta, ni una fallada.</p>';
   } else {
-    missedEl.innerHTML = '<p class="section-label">Para repasar</p>' + round.missed.map(function(m){
+    missedEl.innerHTML='<p class="section-label">Para repasar</p>'+round.missed.map(function(m){
       return '<div class="missed-item"><div class="q">'+escapeHtml(m.q)+'</div><div class="a">Correcta: '+escapeHtml(m.a)+'</div><div>'+escapeHtml(m.exp)+'</div></div>';
     }).join('');
   }
 
-  renderProgressTeaser();
-
   const bigMoment = (round.score===round.questions.length) || newlyUnlocked.length>0 || (newLevel.name!==prevLevel.name);
-  if(bigMoment){
-    burstConfetti();
-    sfxBadge();
-  }
+  if(bigMoment){ burstConfetti(); sfxBadge(); }
 
   showScreen('summary');
 }
 
-function escapeHtml(str){
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
-}
-
 document.getElementById('btn-again').addEventListener('click', startRound);
-document.getElementById('btn-mode').addEventListener('click', function(){ showScreen('start'); });
+document.getElementById('btn-mode').addEventListener('click', function(){ showScreen('home'); renderHome(); });
+
+/* ---------------- bank ---------------- */
+let bankTopicFilter='todos';
+const bankSearch=document.getElementById('bank-search');
+const bankFilterRow=document.getElementById('bank-filter-row');
+bankFilterRow.addEventListener('click', function(e){
+  const pill=e.target.closest('.pill'); if(!pill) return;
+  bankTopicFilter=pill.dataset.topic;
+  [].forEach.call(bankFilterRow.children,function(p){p.classList.toggle('on',p===pill);});
+  renderBankList();
+});
+pillKeyHandler(bankFilterRow);
+bankSearch.addEventListener('input', function(){ renderBankList(); });
+document.getElementById('bank-back').addEventListener('click', function(){ showScreen('home'); renderHome(); });
+
+function renderBankList(){
+  const q = foldAccents(bankSearch.value.trim());
+  const list = BANK.filter(function(item){
+    const topicOK = bankTopicFilter==='todos' || item.topic===bankTopicFilter;
+    if(!topicOK) return false;
+    if(!q) return true;
+    return foldAccents(item.q).indexOf(q)!==-1 || foldAccents(item.correct).indexOf(q)!==-1;
+  });
+  document.getElementById('bank-count').textContent = list.length+' pregunta'+(list.length===1?'':'s');
+  document.getElementById('bank-list').innerHTML = list.map(function(item,i){
+    const meta = TOPIC_META[item.topic];
+    return '<div class="bank-item">'+
+      '<div class="bank-item-tag">'+meta.icon+' '+meta.name+'</div>'+
+      '<div class="bank-item-q">'+escapeHtml(item.q)+'</div>'+
+      '<button class="bank-toggle" data-i="'+i+'">Ver respuesta</button>'+
+      '<div class="bank-answer" id="bank-ans-'+i+'"><b>'+escapeHtml(item.correct)+'</b><br>'+escapeHtml(item.exp)+(item.table?item.table:'')+'</div>'+
+    '</div>';
+  }).join('');
+}
+document.getElementById('bank-list').addEventListener('click', function(e){
+  const btn=e.target.closest('.bank-toggle'); if(!btn) return;
+  const ans=document.getElementById('bank-ans-'+btn.dataset.i);
+  const open=ans.classList.toggle('show');
+  btn.textContent = open ? 'Ocultar respuesta' : 'Ver respuesta';
+});
 
 /* ---------------- init ---------------- */
 loadPersisted();
