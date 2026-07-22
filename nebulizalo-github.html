@@ -703,6 +703,15 @@ const BANK = [
   {topic:'tratamiento', cat:'manejo', reveal:true, q:'Lactante con crisis de asma LEVE, sin uso previo de broncodilatadores. ¿Está indicado iniciar corticoides sistémicos de entrada?',
     opts:['No es necesario — es la única excepción a la indicación precoz de corticoides','Sí, siempre son obligatorios desde el inicio','Sólo si hay fiebre asociada','Sólo en mayores de 5 años'], correct:'No es necesario — es la única excepción a la indicación precoz de corticoides',
     exp:'Los corticoides sistémicos deben darse en forma precoz en toda crisis, con una única excepción explícita: una crisis leve que no ha recibido broncodilatadores previos.', boss:true},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'Al alta domiciliaria tras una crisis asmática leve ya resuelta, ¿cada cuánto se indica el broncodilatador de rescate en el plan escrito?',
+    opts:['Cada 4 horas','Cada 30 minutos','Una vez al día','Sólo si reaparecen síntomas graves'], correct:'Cada 4 horas',
+    exp:'El plan de alta incluye broncodilatadores cada 4 horas, completar la prednisona indicada (5–7 días) y control en 3–4 días.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'Un niño hospitalizado en sala por una crisis asmática, ¿cada cuánto recibe los broncodilatadores mientras está internado?',
+    opts:['Cada 3–4 horas','Cada 8 horas','Una vez al ingreso únicamente','Cada 15 minutos de forma continua'], correct:'Cada 3–4 horas',
+    exp:'En hospitalización de sala se indican broncodilatadores cada 3–4 horas, manteniendo O2 para SatO2≥93% y continuando corticoides. En intermedio se agrega bromuro de ipratropio con la misma frecuencia.'},
+  {topic:'tratamiento', cat:'manejo', reveal:true, q:'A medida que un niño con crisis asmática mejora, ¿cómo cambia el intervalo de administración del salbutamol desde la fase aguda hasta el alta?',
+    opts:['Cada 10 min en la crisis aguda → cada 3–4 h hospitalizado → cada 4 h al alta','Cada 4 h en la crisis aguda → cada 10 min al alta','Se mantiene igual en todas las fases del manejo','Cada 1 hora en todas las fases, sin variar'], correct:'Cada 10 min en la crisis aguda → cada 3–4 h hospitalizado → cada 4 h al alta', boss:true,
+    exp:'El intervalo se va espaciando a medida que el paciente mejora: cada 10 min (hasta 3 veces, según respuesta) en el manejo agudo, cada 3–4 h si queda hospitalizado, y cada 4 h como indicación de alta a domicilio.'},
 
   // ================= TRATAMIENTO :: CONTROL CRÓNICO & BRONQUIOLITIS =================
   {topic:'tratamiento', cat:'cronico', reveal:true, q:'En el tratamiento de la bronquiolitis aguda (BA), ¿qué evidencia existe para el uso de broncodilatadores, kinesioterapia, corticoides y adrenalina racémica?',
@@ -946,7 +955,8 @@ const TRAT_CHEAT = '<div class="cheat-card salbu"><b>🫁 Salbutamol (crisis asm
   '<div class="cheat-card adren"><b>👶 Adrenalina L (croup)</b>1:1000 = 1 mg/mL · 0,5 mL/kg (máx 5 mL) · si &lt;4 mL completar con SF hasta 4–5 mL · O2 6–8 L/min · 10–15 min · observar 2–3 h · siempre con dexametasona.</div>'+
   '<div class="cheat-card salbu"><b>📋 Algoritmo por gravedad (crisis de asma)</b>'+ALGO_TABLE_HTML+'</div>'+
   '<div class="cheat-card adren"><b>🌍 GINA · pasos de tratamiento crónico</b>'+GINA_TABLE_HTML+'</div>'+
-  '<div class="cheat-card salbu"><b>💊 Posología crónico · umbrales</b>Budesonida 200–400 ug/día · Fluticasona 100–200 ug/día · Montelukast 4–5 mg/día · ≤3 crisis/año = sólo manejo del episodio · &gt;3 crisis/año = iniciar CI preventivo (reevaluar 3–6 meses) · step-down: MINSAL sugiere bajar CI 50% · LABA: MINSAL ≥4 años, GINA ≥5, otras guías ≥12.</div>';
+  '<div class="cheat-card salbu"><b>💊 Posología crónico · umbrales</b>Budesonida 200–400 ug/día · Fluticasona 100–200 ug/día · Montelukast 4–5 mg/día · ≤3 crisis/año = sólo manejo del episodio · &gt;3 crisis/año = iniciar CI preventivo (reevaluar 3–6 meses) · step-down: MINSAL sugiere bajar CI 50% · LABA: MINSAL ≥4 años, GINA ≥5, otras guías ≥12.</div>'+
+  '<div class="cheat-card adren"><b>⏱️ Salbutamol · de la crisis al alta</b>Aguda: 2–8 puff IDM c/10 min, hasta 3 veces, según respuesta · Hospitalizado: c/3–4 h · Alta: c/4 h + completar prednisona 5–7 días · SOS crónico: "según necesidad", sin techo fijo de puff/día — se juzga por frecuencia semanal (&gt;1 vez/semana = mal controlado) y su uso muy frecuente indica falta de terapia antiinflamatoria.</div>';
 
 function cheatContentFor(topic){
   if(topic==='clinica') return CLIN_CHEAT;
